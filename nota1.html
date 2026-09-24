@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NOTA 58MM - Konter A Yudi Thea - Rapi</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Poppins',sans-serif}
+body{background:#eef0ff;color:#1e293b;min-height:100vh}
+.header{background:linear-gradient(135deg,#0b63f0 0%, #1976ff 100%);color:white;padding:12px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:30;box-shadow:0 4px 16px rgba(11,99,240,.25)}
+.header .menu{width:36px;height:36px;background:rgba(255,255,255,.18);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.header .title{flex:1;text-align:center}
+.header .title b{font-family:'Poppins';font-size:14px;font-weight:800;display:block;line-height:1.1}
+.header .title small{font-size:10px;opacity:.9;font-weight:500}
+.container{padding:12px;max-width:1280px;margin:0 auto}
+.card{background:white;border-radius:18px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,.06);border:1px solid #e8eaff;margin-bottom:14px}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #f1f5f9}
+.card-head h3{font-family:'Poppins';font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px}
+.badge{font-size:10px;padding:5px 10px;border-radius:20px;font-weight:800;background:#e0e7ff;color:#1e40af}
+.btn{padding:10px 14px;border-radius:12px;border:0;font-weight:700;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;justify-content:center;transition:.2s}
+.btn-primary{background:linear-gradient(135deg,#0b63f0,#1976ff);color:white;box-shadow:0 4px 12px rgba(11,99,240,.25)}
+.btn-dark{background:#0f172a;color:white}
+.btn-green{background:#25D366;color:white}
+.btn-light{background:#f1f5f9;border:1px solid #e2e8f0;color:#475569}
+.btn-full{width:100%;height:44px}
+.label{display:block;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#64748b;margin-bottom:6px}
+.input{width:100%;height:42px;padding:0 12px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0;font-size:13px;outline:none;transition:.2s}
+.input:focus{background:white;border-color:#0b63f0;box-shadow:0 0 0 3px rgba(11,99,240,.12)}
+textarea.input{height:auto;padding:10px 12px;min-height:72px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.tabs{display:flex;background:#0f172a;border-radius:14px;padding:4px;gap:4px;width:fit-content;margin-bottom:14px}
+.tabs button{padding:10px 18px;border-radius:10px;border:0;background:transparent;color:#94a3b8;font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.tabs button.active{background:white;color:#0f172a;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.item-row{display:grid;grid-template-columns:1fr 64px 90px 36px;gap:8px;align-items:start;background:#f8fafc;border:1px solid #eef0ff;border-radius:12px;padding:8px;margin-bottom:8px}
+.preview-wrap{position:sticky;top:70px}
+.struk{width:300px;max-width:100%;margin:0 auto;background:white;border-radius:12px;border:1px dashed #cbd5e1;padding:14px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.06)}
+.divider{border-top:1px dashed #cbd5e1;margin:10px 0}
+.sisa-box{background:#0f172a;color:white;border-radius:12px;padding:12px;display:flex;justify-content:space-between;align-items:center}
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid #f1f5f9;cursor:pointer}
+.history-item:hover{background:#f8faff}
+@media(max-width:1024px){.main-grid{grid-template-columns:1fr !important}.preview-wrap{position:static}.struk{width:100%}}
+@media print{
+  @page{size:58mm auto;margin:0}
+  body *{visibility:hidden !important}
+  #struk-area,#struk-area *{visibility:visible !important}
+  #struk-area{position:absolute !important;left:0 !important;top:0 !important;width:58mm !important;border:none !important;box-shadow:none !important;border-radius:0 !important}
+  .no-print{display:none !important}
+}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0f172a;color:white;padding:10px 16px;border-radius:20px;font-size:12px;font-weight:600;z-index:100;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="menu">☰</div>
+  <div class="title"><b>🏪 KONTER A YUDI THEA</b><small>NOTA 58MM • THERMAL PRINT • Bluetooth Ready</small></div>
+  <div style="width:36px"></div>
+</div>
+
+<div class="container no-print">
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <span style="font-size:11px;background:white;padding:6px 10px;border-radius:20px;border:1px solid #e8eaff;font-weight:600">📄 58mm Thermal</span>
+    <span style="font-size:11px;background:#dcfce7;color:#166534;padding:6px 10px;border-radius:20px;font-weight:700">● Ready to Print</span>
+    <button onclick="toggleToko()" style="margin-left:auto;font-size:11px;padding:6px 12px;border-radius:20px;border:1px solid #e8eaff;background:white;font-weight:700;cursor:pointer">⚙️ Pengaturan Toko</button>
+  </div>
+
+  <div id="tokoBox" class="card" style="display:none">
+    <div class="card-head"><h3>🏪 Pengaturan Header Struk</h3><span class="badge">Auto Save</span></div>
+    <div class="grid2">
+      <div><span class="label">Nama Toko</span><input id="tokoNama" class="input" style="font-weight:800;text-transform:uppercase" placeholder="NAMA TOKO"></div>
+      <div><span class="label">No HP / WA Toko</span><input id="tokoHp" class="input" placeholder="08xx"></div>
+      <div style="grid-column:1/3"><span class="label">Alamat Toko</span><input id="tokoAlamat" class="input" placeholder="Jl. Raya ..."></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button id="btnService" class="active" onclick="setMode('service')">📱 SERVICE HP</button>
+    <button id="btnBelanja" onclick="setMode('belanja')">🛒 BELANJA</button>
+  </div>
+
+  <div class="main-grid" style="display:grid;grid-template-columns:1.15fr .85fr;gap:14px;align-items:start">
+
+    <!-- FORM -->
+    <div class="card">
+      <div class="card-head">
+        <h3 id="formTitle">📱 Form Service HP</h3>
+        <span class="badge" id="formNo">SRV-xxxx</span>
+      </div>
+
+      <!-- SERVICE FORM -->
+      <div id="serviceForm">
+        <div class="grid2">
+          <div><span class="label">No Nota</span><input id="sNo" class="input" style="font-family:'JetBrains Mono';font-weight:700"></div>
+          <div><span class="label">Tanggal</span><input id="sTanggal" type="date" class="input"></div>
+          <div><span class="label">Nama Pelanggan</span><input id="sNama" class="input" placeholder="Nama"></div>
+          <div><span class="label">No HP Pelanggan</span><input id="sHp" class="input" placeholder="08xx"></div>
+          <div><span class="label">Merk / Tipe HP</span><input id="sTipe" class="input" placeholder="iPhone 11 / Redmi Note 12"></div>
+          <div><span class="label">IMEI / SN</span><input id="sImei" class="input" style="font-family:'JetBrains Mono';font-size:12px" placeholder="IMEI"></div>
+        </div>
+        <div style="margin-top:12px"><span class="label">Keluhan / Kerusakan</span><textarea id="sKeluhan" class="input" placeholder="Mati total, kena air, LCD pecah..."></textarea></div>
+        <div style="margin-top:10px"><span class="label">Tindakan / Sparepart</span><textarea id="sTindakan" class="input" placeholder="Ganti IC Power, Ganti LCD Original..."></textarea></div>
+        <div class="grid3" style="margin-top:12px">
+          <div><span class="label">Biaya</span><input id="sBiaya" type="number" class="input" style="font-weight:700"><small id="sBiayaTxt" style="font-size:10px;color:#64748b"></small></div>
+          <div><span class="label">DP / Muka</span><input id="sDp" type="number" class="input"><small id="sDpTxt" style="font-size:10px;color:#64748b"></small></div>
+          <div><div class="sisa-box"><div><div style="font-size:9px;letter-spacing:1px;opacity:.7">SISA BAYAR</div><div id="sSisa" style="font-weight:800;font-size:14px;margin-top:2px">Rp 0</div></div></div></div>
+        </div>
+        <div class="grid2" style="margin-top:12px">
+          <div><span class="label">Garansi</span><select id="sGaransi" class="input"><option>Tidak Garansi</option><option>3 Hari</option><option selected>7 Hari</option><option>14 Hari</option><option>30 Hari</option></select></div>
+          <div><span class="label">Status</span><select id="sStatus" class="input"><option>Masuk</option><option>Dikonfirmasi</option><option>Proses</option><option>Selesai</option><option>Sudah Diambil</option></select></div>
+        </div>
+        
+        <div style="margin-top:16px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;border-radius:14px;padding:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="font-size:11px;font-weight:800;letter-spacing:.5px;color:#1e40af">💬 KONFIRMASI CEPAT KE PELANGGAN</span>
+            <span style="font-size:9px;background:white;padding:3px 8px;border-radius:20px;color:#1e40af;border:1px solid #bfdbfe">WA Ready</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button onclick="confirmTemplate('selesai')" class="btn" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;font-size:11px;padding:10px">✅ Sudah Selesai<br><small style="font-weight:500;font-size:9px">HP selesai diperbaiki</small></button>
+            <button onclick="confirmTemplate('harga')" class="btn" style="background:#fef9c3;color:#854d0e;border:1px solid #fde68a;font-size:11px;padding:10px">💰 Ada Perubahan Harga<br><small style="font-weight:500;font-size:9px">Biaya naik / tambahan</small></button>
+            <button onclick="confirmTemplate('tidak_bisa')" class="btn" style="background:#fee2e2;color:#991b1b;border:1px solid #fecaca;font-size:11px;padding:10px">❌ Tidak Bisa Diperbaiki<br><small style="font-weight:500;font-size:9px">Rusak parah / no part</small></button>
+            <button onclick="confirmTemplate('lanjut_tidak')" class="btn" style="background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe;font-size:11px;padding:10px">🤔 Lanjut / Tidak?<br><small style="font-weight:500;font-size:9px">Minta konfirmasi</small></button>
+          </div>
+          <div style="font-size:10px;color:#475569;margin-top:8px;line-height:1.4">Klik tombol di atas, otomatis buka template WA siap kirim ke pelanggan. Bisa edit dulu sebelum kirim.</div>
+        </div>
+
+        <div style="margin-top:10px"><span class="label">Catatan Footer Struk</span><input id="sCatatan" class="input" style="font-size:12px" value="Barang tidak diambil >30 hari bukan tanggung jawab kami."></div>
+      </div>
+
+      <!-- BELANJA FORM -->
+      <div id="belanjaForm" style="display:none">
+        <div class="grid2">
+          <div><span class="label">No Nota</span><input id="bNo" class="input" style="font-family:'JetBrains Mono';font-weight:700"></div>
+          <div><span class="label">Tanggal</span><input id="bTanggal" type="date" class="input"></div>
+          <div style="grid-column:1/3"><span class="label">Nama Pelanggan</span><input id="bNama" class="input" value="Umum"></div>
+        </div>
+        <div style="margin-top:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span class="label" style="margin:0">Daftar Item</span><button onclick="addItem()" class="btn btn-dark" style="padding:6px 12px;font-size:11px">+ Tambah</button></div>
+          <div id="itemsList"></div>
+        </div>
+        <div class="card" style="background:#0f172a;color:white;margin-top:14px;padding:12px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;opacity:.7"><span>SUBTOTAL</span><span id="bSubtotal">Rp 0</span></div>
+          <div class="grid2" style="margin-top:10px">
+            <div><span style="font-size:9px;letter-spacing:1px;opacity:.6">DISKON (Rp)</span><input id="bDiskon" type="number" class="input" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.1);color:white;margin-top:4px"></div>
+            <div><span style="font-size:9px;letter-spacing:1px;opacity:.6">METODE BAYAR</span><select id="bMetode" class="input" style="background:white;color:#0f172a;margin-top:4px"><option>Cash</option><option>Transfer</option><option>QRIS</option></select></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)">
+            <div><div style="font-size:9px;letter-spacing:1px;opacity:.6">TOTAL BAYAR</div><div id="bTotal" style="font-size:18px;font-weight:800;margin-top:2px">Rp 0</div></div>
+            <div><span style="font-size:9px;letter-spacing:1px;opacity:.6">BAYAR</span><input id="bBayar" type="number" class="input" style="background:white;color:#0f172a;height:36px;margin-top:4px;font-weight:700"><div id="bKembali" style="font-size:11px;margin-top:6px;font-weight:600;color:#4ade80">Kembali: Rp 0</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">
+        <button onclick="simpan()" class="btn btn-dark btn-full">💾 Simpan Riwayat</button>
+        <button onclick="shareWA()" class="btn btn-green btn-full">💬 Bagikan WA</button>
+        <button onclick="baru()" class="btn btn-light btn-full" style="grid-column:1/3">🔄 Nota Baru / Reset</button>
+        <button onclick="window.print()" class="btn btn-primary btn-full" style="grid-column:1/3">🖨️ Cetak 58mm</button>
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="preview-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:0 4px">
+        <span style="font-size:11px;font-weight:700;color:#64748b;display:flex;align-items:center;gap:6px">⏰ PREVIEW LIVE 58MM</span>
+        <span style="font-size:9px;background:white;padding:4px 8px;border-radius:20px;border:1px solid #e8eaff">300px • Bluetooth Ready</span>
+      </div>
+      <div id="struk-area" class="struk">
+        <div style="text-align:center">
+          <div id="pTokoNama" style="font-weight:800;font-size:14px;letter-spacing:.5px">A YUDI THEA</div>
+          <div id="pTokoAlamat" style="font-size:10px;margin-top:2px;white-space:pre-wrap">Depan pasar hewan blok Jum'at maja utara</div>
+          <div style="font-size:10px">WA: <span id="pTokoHp">0823-1926-4646</span></div>
+          <div style="font-size:9px;margin-top:2px">Jam Buka: 08.30-17.00</div>
+        </div>
+        <div class="divider"></div>
+        <div id="pContent"></div>
+        <div class="divider"></div>
+        <div style="text-align:center;font-size:9px">
+          <div>Terima kasih atas kunjungan Anda</div>
+          <div style="color:#64748b;margin-top:2px">Barang sudah dicek • Simpan nota ini sebagai bukti</div>
+          <div style="font-weight:800;letter-spacing:2px;margin-top:8px" id="pFooterNama">- - - A YUDI THEA - - -</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;padding:12px">
+        <div style="font-size:12px;font-weight:700">Format Struk 58mm • Thermal Ready</div>
+        <div style="font-size:11px;color:#64748b;margin-top:4px;line-height:1.4">Lebar 58mm / 2.28 inch, font monospace, siap untuk printer bluetooth thermal. Layout otomatis menyesuaikan kertas.</div>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f1f5f9">
+          <span style="font-size:12px;font-weight:700">🕒 Riwayat Nota Terakhir</span>
+          <span id="historyCount" style="font-size:10px;color:#64748b">0 tersimpan</span>
+        </div>
+        <div id="historyList"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast" class="toast" style="display:none"></div>
+
+<div id="waModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:50;align-items:end;justify-content:center;padding:12px">
+  <div style="background:white;border-radius:18px;width:100%;max-width:420px;overflow:hidden">
+    <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f1f5f9"><b style="font-size:13px">💬 Preview WhatsApp</b><button onclick="closeWA()" style="padding:6px 12px;border-radius:20px;border:1px solid #e2e8f0;background:#f8fafc;font-size:11px;font-weight:700;cursor:pointer">Tutup</button></div>
+    <div style="padding:14px"><div id="waText" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;font-size:12px;font-family:'JetBrains Mono';white-space:pre-wrap;max-height:260px;overflow:auto"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px"><button onclick="copyWA()" class="btn btn-dark">Salin Teks</button><a id="waLink" target="_blank" class="btn btn-green" style="text-decoration:none">Buka WhatsApp</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function rupiah(n){return 'Rp '+new Intl.NumberFormat('id-ID').format(Math.round(Number(n)||0))}
+function angka(n){if(isNaN(n)||n===null)return'0';return new Intl.NumberFormat('id-ID').format(Math.round(n))}
+function genNo(p){const d=new Date();return `${p}-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${String(Math.floor(Math.random()*900)+100)}`}
+function today(){return new Date().toISOString().slice(0,10)}
+function fmtTgl(s){if(!s)return'-';const [y,m,d]=s.split('-');return `${d}/${m}/${y}`}
+
+let mode='service';
+let toko={nama:'A YUDI THEA',alamat:"Depan pasar hewan blok Jum'at maja utara",hp:'0823-1926-4646'};
+let items=[{id:'1',nama:'Tempered Glass',qty:1,harga:35000},{id:'2',nama:'Casing HP',qty:1,harga:50000}];
+let history=[];
+
+function saveLS(){
+  localStorage.setItem('konter_toko',JSON.stringify(toko));
+  localStorage.setItem('konter_history',JSON.stringify(history.slice(0,20)));
+}
+function loadLS(){
+  localStorage.removeItem('konter_toko'); // force update ke A YUDI THEA
+
+  try{
+    const t=localStorage.getItem('konter_toko'); if(t) toko=JSON.parse(t);
+    const h=localStorage.getItem('konter_history'); if(h) history=JSON.parse(h);
+  }catch{}
+}
+function toast(msg){const el=document.getElementById('toast'); el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',2500)}
+
+function toggleToko(){
+  const box=document.getElementById('tokoBox');
+  box.style.display=box.style.display==='none'?'block':'none';
+}
+function setMode(m){
+  mode=m;
+  document.getElementById('btnService').className=m==='service'?'active':'';
+  document.getElementById('btnBelanja').className=m==='belanja'?'active':'';
+  document.getElementById('serviceForm').style.display=m==='service'?'block':'none';
+  document.getElementById('belanjaForm').style.display=m==='belanja'?'block':'none';
+  document.getElementById('formTitle').textContent=m==='service'?'📱 Form Service HP':'🛒 Form Nota Belanja';
+  render();
+}
+
+function renderItems(){
+  const list=document.getElementById('itemsList');
+  list.innerHTML=items.map(it=>`
+    <div class="item-row">
+      <input value="${it.nama}" oninput="updItem('${it.id}','nama',this.value)" placeholder="Nama barang" class="input" style="height:36px;font-size:12px">
+      <input type="number" value="${it.qty}" oninput="updItem('${it.id}','qty',this.value)" class="input" style="height:36px;text-align:center;font-size:12px">
+      <input type="number" value="${it.harga}" oninput="updItem('${it.id}','harga',this.value)" class="input" style="height:36px;font-size:12px">
+      <button onclick="delItem('${it.id}')" style="width:36px;height:36px;border-radius:10px;border:1px solid #e2e8f0;background:white;cursor:pointer">🗑️</button>
+      <div style="grid-column:1/5;display:flex;justify-content:space-between;font-size:10px;color:#64748b;padding:0 4px"><span>${it.qty} x ${rupiah(it.harga)}</span><b style="color:#0f172a">${rupiah(it.qty*it.harga)}</b></div>
+    </div>
+  `).join('');
+}
+function updItem(id,k,v){items=items.map(it=>it.id===id?{...it,[k]:k==='nama'?v:Number(v)}:it); calc(); render();}
+function addItem(){items.push({id:Date.now().toString(),nama:'',qty:1,harga:0}); renderItems(); calc();}
+function delItem(id){items=items.filter(it=>it.id!==id); renderItems(); calc();}
+
+function calc(){
+  const biaya=Number(document.getElementById('sBiaya')?.value||0);
+  const dp=Number(document.getElementById('sDp')?.value||0);
+  document.getElementById('sSisa').textContent=rupiah(Math.max(0,biaya-dp));
+  document.getElementById('sBiayaTxt').textContent=rupiah(biaya);
+  document.getElementById('sDpTxt').textContent=rupiah(dp);
+
+  const subtotal=items.reduce((a,b)=>a+b.qty*b.harga,0);
+  const diskon=Number(document.getElementById('bDiskon')?.value||0);
+  const total=Math.max(0,subtotal-diskon);
+  const bayar=Number(document.getElementById('bBayar')?.value||0);
+  document.getElementById('bSubtotal').textContent=rupiah(subtotal);
+  document.getElementById('bTotal').textContent=rupiah(total);
+  document.getElementById('bKembali').textContent='Kembali: '+rupiah(bayar-total);
+  document.getElementById('bKembali').style.color=bayar-total<0?'#f87171':'#4ade80';
+
+  // preview toko
+  document.getElementById('pTokoNama').textContent=document.getElementById('tokoNama').value||toko.nama;
+  document.getElementById('pTokoAlamat').textContent=document.getElementById('tokoAlamat').value||toko.alamat;
+  document.getElementById('pTokoHp').textContent=document.getElementById('tokoHp').value||toko.hp;
+  document.getElementById('pFooterNama').textContent='- - - '+(document.getElementById('tokoNama').value||toko.nama)+' - - -';
+
+  renderPreview();
+}
+function renderPreview(){
+  const p=document.getElementById('pContent');
+  if(mode==='service'){
+    const no=document.getElementById('sNo').value, tgl=document.getElementById('sTanggal').value, nama=document.getElementById('sNama').value, hp=document.getElementById('sHp').value, tipe=document.getElementById('sTipe').value, imei=document.getElementById('sImei').value, kel=document.getElementById('sKeluhan').value, tind=document.getElementById('sTindakan').value, biaya=document.getElementById('sBiaya').value, dp=document.getElementById('sDp').value, sisa=Math.max(0,Number(biaya)-Number(dp)), gar=document.getElementById('sGaransi').value, stat=document.getElementById('sStatus').value, cat=document.getElementById('sCatatan').value;
+    p.innerHTML=`
+      <div style="text-align:center;font-weight:800;font-size:12px;letter-spacing:1px;margin-bottom:8px">NOTA SERVICE HP</div>
+      <div style="font-size:10px;line-height:1.6">
+        <div style="display:flex;justify-content:space-between"><span>No</span><b>${no}</b></div>
+        <div style="display:flex;justify-content:space-between"><span>Tgl</span><span>${fmtTgl(tgl)}</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Status</span><b style="text-transform:uppercase">${stat}</b></div>
+      </div>
+      <div style="border-top:1px dashed #cbd5e1;margin:8px 0"></div>
+      <div style="font-size:10px;line-height:1.6">
+        <div>Plg: <b>${nama||'-'}</b></div>
+        <div>HP Plg: ${hp||'-'}</div>
+        <div>Tipe: <b>${tipe||'-'}</b></div>
+        <div style="word-break:break-all">IMEI: ${imei||'-'}</div>
+      </div>
+      <div style="border-top:1px dashed #e2e8f0;margin:8px 0"></div>
+      <div style="font-size:10px"><b>Keluhan:</b><div style="white-space:pre-wrap">${kel||'-'}</div></div>
+      <div style="font-size:10px;margin-top:6px"><b>Tindakan:</b><div style="white-space:pre-wrap">${tind||'-'}</div></div>
+      <div style="border-top:1px dashed #94a3b8;margin:8px 0"></div>
+      <div style="font-size:10px">
+        <div style="display:flex;justify-content:space-between"><span>Biaya Service</span><span>${rupiah(biaya)}</span></div>
+        <div style="display:flex;justify-content:space-between"><span>DP / Uang Muka</span><span>${rupiah(dp)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-weight:800;font-size:12px;border:1px solid #0f172a;padding:4px 6px;margin-top:6px"><span>SISA BAYAR</span><span>${rupiah(sisa)}</span></div>
+      </div>
+      <div style="border-top:1px dashed #e2e8f0;margin:8px 0"></div>
+      <div style="font-size:9px">Garansi: ${gar}</div>
+      ${cat?`<div style="border-top:1px dashed #e2e8f0;margin-top:8px;padding-top:6px;font-size:8px;line-height:1.3">* ${cat}</div>`:''}
+    `;
+  }else{
+    const no=document.getElementById('bNo').value, tgl=document.getElementById('bTanggal').value, nama=document.getElementById('bNama').value;
+    const subtotal=items.reduce((a,b)=>a+b.qty*b.harga,0);
+    const diskon=Number(document.getElementById('bDiskon').value||0);
+    const total=Math.max(0,subtotal-diskon);
+    const bayar=Number(document.getElementById('bBayar').value||0);
+    const metode=document.getElementById('bMetode').value;
+    p.innerHTML=`
+      <div style="text-align:center;font-weight:800;font-size:12px;letter-spacing:1px;margin-bottom:8px">NOTA BELANJA</div>
+      <div style="font-size:10px;display:flex;justify-content:space-between"><span>No</span><b>${no}</b></div>
+      <div style="font-size:10px;display:flex;justify-content:space-between"><span>Tgl</span><span>${fmtTgl(tgl)}</span></div>
+      <div style="font-size:10px;display:flex;justify-content:space-between"><span>Plg</span><b>${nama}</b></div>
+      <div style="border-top:1px dashed #94a3b8;margin:8px 0"></div>
+      ${items.map((it,i)=>`<div style="margin-bottom:6px"><div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${i+1}. ${it.nama||'(tanpa nama)'}</div><div style="display:flex;justify-content:space-between;font-size:10px"><span>${it.qty} x ${angka(it.harga)}</span><span>${rupiah(it.qty*it.harga)}</span></div></div>`).join('')}
+      <div style="border-top:1px dashed #94a3b8;margin:8px 0"></div>
+      <div style="font-size:10px">
+        <div style="display:flex;justify-content:space-between"><span>Subtotal</span><span>${rupiah(subtotal)}</span></div>
+        ${diskon>0?`<div style="display:flex;justify-content:space-between"><span>Diskon</span><span>-${rupiah(diskon)}</span></div>`:''}
+        <div style="display:flex;justify-content:space-between;font-weight:800;font-size:12px;margin-top:4px"><span>TOTAL</span><span>${rupiah(total)}</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Bayar (${metode})</span><span>${rupiah(bayar)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-weight:700;border-top:1px dashed #cbd5e1;margin-top:6px;padding-top:6px"><span>KEMBALI</span><span>${rupiah(bayar-total)}</span></div>
+      </div>
+    `;
+  }
+}
+function renderHistory(){
+  document.getElementById('historyCount').textContent=history.length+' tersimpan';
+  document.getElementById('historyList').innerHTML=history.length===0?'<div style="padding:24px;text-align:center;color:#94a3b8;font-size:12px">Belum ada riwayat. Simpan nota untuk melihat di sini.</div>':history.slice(0,5).map(h=>`
+    <div class="history-item" onclick="loadHistory('${h.id}')">
+      <div style="display:flex;gap:10px;align-items:center;min-width:0">
+        <div style="width:32px;height:32px;border-radius:8px;background:${h.type==='service'?'#0f172a':'#f1f5f9'};color:${h.type==='service'?'white':'#0f172a'};display:grid;place-items:center;font-size:14px">${h.type==='service'?'📱':'🛒'}</div>
+        <div style="min-width:0"><div style="font-family:'JetBrains Mono';font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.no}</div><div style="font-size:11px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.pelanggan} • ${fmtTgl(h.tanggal)}</div></div>
+      </div>
+      <div style="text-align:right"><div style="font-size:12px;font-weight:700">${rupiah(h.total)}</div><div style="font-size:9px;padding:2px 6px;border-radius:20px;background:#f1f5f9;border:1px solid #e2e8f0;display:inline-block;margin-top:2px">${h.type==='service'?'SERVICE':'BELANJA'}</div></div>
+    </div>
+  `).join('');
+}
+function loadHistory(id){
+  const h=history.find(x=>x.id===id); if(!h) return;
+  setMode(h.type);
+  if(h.type==='service'){
+    const r=h.raw;
+    document.getElementById('sNo').value=r.no; document.getElementById('sTanggal').value=r.tanggal; document.getElementById('sNama').value=r.nama; document.getElementById('sHp').value=r.hp; document.getElementById('sTipe').value=r.tipe; document.getElementById('sImei').value=r.imei; document.getElementById('sKeluhan').value=r.keluhan; document.getElementById('sTindakan').value=r.tindakan; document.getElementById('sBiaya').value=r.biaya; document.getElementById('sDp').value=r.dp; document.getElementById('sGaransi').value=r.garansi; document.getElementById('sStatus').value=r.status; document.getElementById('sCatatan').value=r.catatan;
+  }else{
+    const r=h.raw;
+    document.getElementById('bNo').value=r.no; document.getElementById('bTanggal').value=r.tanggal; document.getElementById('bNama').value=r.nama; items=r.items; document.getElementById('bDiskon').value=r.diskon; document.getElementById('bBayar').value=r.bayar; document.getElementById('bMetode').value=r.metode; renderItems();
+  }
+  calc(); toast('Riwayat '+h.no+' dimuat'); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function baru(){
+  if(mode==='service'){
+    document.getElementById('sNo').value=genNo('SRV'); document.getElementById('sTanggal').value=today();
+    ['sNama','sHp','sTipe','sImei','sKeluhan','sTindakan'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('sBiaya').value=150000; document.getElementById('sDp').value=50000;
+    document.getElementById('sGaransi').value='7 Hari'; document.getElementById('sStatus').value='Masuk';
+  }else{
+    document.getElementById('bNo').value=genNo('BLJ'); document.getElementById('bTanggal').value=today();
+    document.getElementById('bNama').value='Umum'; items=[{id:Date.now().toString(),nama:'',qty:1,harga:0}]; renderItems();
+    document.getElementById('bDiskon').value=0; document.getElementById('bBayar').value=0;
+  }
+  calc(); toast('Nota baru dibuat');
+}
+function simpan(){
+  let data;
+  if(mode==='service'){
+    data={id:Date.now().toString(),type:'service',no:document.getElementById('sNo').value,tanggal:document.getElementById('sTanggal').value,pelanggan:document.getElementById('sNama').value||'Tanpa Nama',total:Number(document.getElementById('sBiaya').value||0),raw:{no:document.getElementById('sNo').value,tanggal:document.getElementById('sTanggal').value,nama:document.getElementById('sNama').value,hp:document.getElementById('sHp').value,tipe:document.getElementById('sTipe').value,imei:document.getElementById('sImei').value,keluhan:document.getElementById('sKeluhan').value,tindakan:document.getElementById('sTindakan').value,biaya:Number(document.getElementById('sBiaya').value||0),dp:Number(document.getElementById('sDp').value||0),garansi:document.getElementById('sGaransi').value,status:document.getElementById('sStatus').value,catatan:document.getElementById('sCatatan').value},createdAt:Date.now()};
+  }else{
+    const subtotal=items.reduce((a,b)=>a+b.qty*b.harga,0); const diskon=Number(document.getElementById('bDiskon').value||0); const total=Math.max(0,subtotal-diskon);
+    data={id:Date.now().toString(),type:'belanja',no:document.getElementById('bNo').value,tanggal:document.getElementById('bTanggal').value,pelanggan:document.getElementById('bNama').value||'Umum',total,raw:{no:document.getElementById('bNo').value,tanggal:document.getElementById('bTanggal').value,nama:document.getElementById('bNama').value,items:[...items],diskon, bayar:Number(document.getElementById('bBayar').value||0), metode:document.getElementById('bMetode').value},createdAt:Date.now()};
+  }
+  history=[data,...history].slice(0,20); saveLS(); renderHistory(); toast('Riwayat '+data.no+' disimpan');
+}
+function shareWA(){
+  let txt='';
+  if(mode==='service'){
+    const no=document.getElementById('sNo').value, tgl=fmtTgl(document.getElementById('sTanggal').value), nama=document.getElementById('sNama').value, tipe=document.getElementById('sTipe').value, imei=document.getElementById('sImei').value, kel=document.getElementById('sKeluhan').value, biaya=document.getElementById('sBiaya').value, dp=document.getElementById('sDp').value, sisa=Math.max(0,Number(biaya)-Number(dp)), stat=document.getElementById('sStatus').value;
+    txt=`*${document.getElementById('tokoNama').value}*\n*NOTA SERVICE HP*\nNo: ${no}\nTgl: ${tgl}\nPelanggan: ${nama}\nHP: ${tipe} - ${imei}\nKeluhan: ${kel}\nBiaya: ${rupiah(biaya)}\nDP: ${rupiah(dp)}\nSISA: ${rupiah(sisa)}\nStatus: ${stat}\nTerima kasih!`;
+  }else{
+    const no=document.getElementById('bNo').value, subtotal=items.reduce((a,b)=>a+b.qty*b.harga,0), diskon=Number(document.getElementById('bDiskon').value||0), total=Math.max(0,subtotal-diskon), bayar=document.getElementById('bBayar').value;
+    const list=items.map(it=>`- ${it.nama} ${it.qty}x${angka(it.harga)}`).join('\n');
+    txt=`*${document.getElementById('tokoNama').value}*\n*NOTA BELANJA*\nNo: ${no}\n${list}\nTotal: ${rupiah(total)}\nBayar: ${rupiah(bayar)}\nTerima kasih!`;
+  }
+  document.getElementById('waText').textContent=txt;
+  document.getElementById('waLink').href=`https://wa.me/?text=${encodeURIComponent(txt)}`;
+  document.getElementById('waModal').style.display='flex';
+}
+function closeWA(){document.getElementById('waModal').style.display='none'}
+function copyWA(){navigator.clipboard?.writeText(document.getElementById('waText').textContent); toast('Teks disalin')}
+
+
+function confirmTemplate(type){
+  const nama=document.getElementById('sNama').value||'Kak';
+  const tipe=document.getElementById('sTipe').value||'HP';
+  const no=document.getElementById('sNo').value;
+  const biaya=Number(document.getElementById('sBiaya').value||0);
+  const keluhan=document.getElementById('sKeluhan').value||'-';
+  const tindakan=document.getElementById('sTindakan').value||'-';
+  const tokoNama=document.getElementById('tokoNama').value||'KONTER A YUDI THEA';
+  let msg='';
+  switch(type){
+    case 'selesai':
+      msg=`Halo ${nama} 🙏
+
+HP *${tipe}* No Nota *${no}* sudah *SELESAI diperbaiki* ✅
+
+Rincian:
+• Keluhan: ${keluhan}
+• Tindakan: ${tindakan}
+• Total biaya: ${rupiah(biaya)}
+
+Silakan diambil di *${tokoNama}*
+Jl. Raya - Buka 08.30-17.00
+
+Terima kasih sudah service di tempat kami! 🙏`;
+      break;
+    case 'harga':
+      msg=`Halo ${nama} 🙏
+
+Untuk HP *${tipe}* No Nota *${no}*,
+Ada *perubahan harga* ⚠️
+
+Keluhan awal: ${keluhan}
+Setelah dicek perlu: ${tindakan}
+
+Biaya sebelumnya: ${rupiah(biaya)}
+*Biaya update akan diinfokan*
+
+Apakah *LANJUT* atau *TIDAK*?
+
+Mohon balas chat ini ya Kak 🙏
+
+*${tokoNama}*`;
+      break;
+    case 'tidak_bisa':
+      msg=`Halo ${nama} 🙏
+
+Mohon maaf, setelah dicek teknisi,
+HP *${tipe}* No Nota *${no}* *TIDAK BISA diperbaiki* ❌
+
+Penyebab: Mesin / IC utama rusak parah / tidak ada sparepart / biaya tidak sebanding.
+
+HP bisa diambil kembali tanpa biaya.
+(Atau biaya cek Rp 20rb jika sudah bongkar dalam)
+
+Terima kasih pengertiannya ya Kak 🙏
+
+*${tokoNama}*`;
+      break;
+    case 'lanjut_tidak':
+      msg=`Halo ${nama} 🙏
+
+Konfirmasi service HP *${tipe}* No Nota *${no}*
+
+Keluhan: ${keluhan}
+Tindakan yang akan dilakukan: ${tindakan}
+Estimasi biaya: ${rupiah(biaya)}
+
+Apakah *LANJUT* atau *TIDAK* diperbaiki?
+
+Mohon balas:
+Ketik *LANJUT* jika setuju
+Ketik *TIDAK* jika batal
+
+Biar segera kami proses ya Kak. Terima kasih! 🙏
+
+*${tokoNama}*`;
+      break;
+  }
+  document.getElementById('waText').textContent=msg;
+  document.getElementById('waLink').href=`https://wa.me/?text=${encodeURIComponent(msg)}`;
+  document.getElementById('waModal').style.display='flex';
+}
+
+function init(){
+  loadLS();
+  document.getElementById('tokoNama').value=toko.nama; document.getElementById('tokoAlamat').value=toko.alamat; document.getElementById('tokoHp').value=toko.hp;
+  ['tokoNama','tokoAlamat','tokoHp'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',()=>{
+      toko={nama:document.getElementById('tokoNama').value,alamat:document.getElementById('tokoAlamat').value,hp:document.getElementById('tokoHp').value};
+      saveLS(); calc();
+    });
+  });
+  document.getElementById('sNo').value=genNo('SRV'); document.getElementById('sTanggal').value=today();
+  document.getElementById('bNo').value=genNo('BLJ'); document.getElementById('bTanggal').value=today();
+  document.getElementById('sBiaya').value=150000; document.getElementById('sDp').value=50000;
+  document.getElementById('bBayar').value=100000;
+  ['sNo','sTanggal','sNama','sHp','sTipe','sImei','sKeluhan','sTindakan','sBiaya','sDp','sGaransi','sStatus','sCatatan','bNo','bTanggal','bNama','bDiskon','bBayar','bMetode'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.addEventListener('input',calc);
+  });
+  renderItems(); renderHistory(); calc();
+}
+init();
+function render(){calc()}
+</script>
+
+</body>
+</html>

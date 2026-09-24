@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KONTER 2026 - Data Live</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Poppins',sans-serif}
+body{background:#eef0ff;color:#1e293b;min-height:100vh}
+.header{background:linear-gradient(135deg,#0b63f0 0%, #1976ff 100%);color:white;padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20;box-shadow:0 4px 16px rgba(11,99,240,.25)}
+.header.btn{width:36px;height:36px;background:rgba(255,255,255,.18);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:0;color:white;font-size:16px}
+.header.btn:hover{background:rgba(255,255,255,.3)}
+.header.title{flex:1;text-align:center}
+.header.title b{font-family:'Poppins';font-size:14px;font-weight:800;display:block;line-height:1.1}
+.header.title small{font-size:10px;opacity:.9;font-weight:500}
+.container{padding:12px;max-width:1000px;margin:0 auto}
+.card{background:white;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.06);border:1px solid #e8eaff;overflow:hidden;margin-bottom:14px}
+.card-head{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f1f5f9}
+.card-head h3{font-family:'Poppins';font-size:13px;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:8px}
+.badge{font-size:10px;padding:5px 10px;border-radius:20px;font-weight:800}
+.badge-blue{background:#dbeafe;color:#1e40af}.badge-green{background:#dcfce7;color:#166534}
+.tabs-wrap{padding:10px 12px;background:#eef0ff}
+.tabs{display:flex;background:white;border-radius:14px;padding:4px;gap:4px;box-shadow:0 2px 8px rgba(0,0,0,.04);border:1px solid #e8eaff}
+.tabs button{flex:1;padding:11px 8px;border:0;background:transparent;border-radius:10px;font-weight:700;font-size:11px;color:#64748b;cursor:pointer;transition:.2s;font-family:'Poppins';line-height:1.2}
+.tabs button.active{background:linear-gradient(135deg,#0b63f0,#1976ff);color:white;box-shadow:0 4px 10px rgba(11,99,240,.25)}
+.tabs button.active small{color:rgba(255,255,.9)}
+.table-wrap{overflow:auto;max-height:70vh}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:600px}
+th{background:linear-gradient(135deg,#0b63f0,#3b82f6);color:white;padding:10px 10px;text-align:left;font-family:'Poppins';font-size:11px;font-weight:700;position:sticky;top:0;z-index:2;white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+tr:hover td{background:#f8faff}
+tr.total td{background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af;font-weight:800;font-family:'Poppins';border-bottom:0}
+.num{text-align:right;font-weight:700;font-family:'Inter'}
+.empty{text-align:center;padding:30px;color:#94a3b8}
+.footer{text-align:center;padding:14px;color:#94a3b8;font-size:10px}
+.loading{text-align:center;padding:20px;color:#64748b;font-size:12px}
+.info-period{background:#fef3c7;color:#92400e;padding:8px 12px;font-size:10px;font-weight:700;text-align:center;border-bottom:1px solid #fde68a}
+.error-box{background:#fee2e2;color:#991b1b;padding:12px;margin:10px;border-radius:8px;font-size:11px}
+.rekening-box{background:linear-gradient(135deg,#1e3a8a,#1e40af);color:white;padding:16px;margin:12px;border-radius:14px;box-shadow:0 6px 16px rgba(30,64,175,.3)}
+.rekening-box h4{font-family:'Poppins';font-size:13px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.rekening-row{display:flex;justify-content:space-between;align-items:center;margin:8px 0;font-size:12px}
+.rekening-row.label{opacity:.9;font-weight:600}
+.rekening-row.value{font-weight:800;font-family:'Poppins';font-size:13px}
+.copy-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:white;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;margin-left:8px}
+.copy-btn:hover{background:rgba(255,255,255,.3)}
+.wa-btn{background:#25d366;color:white;padding:10px 16px;border-radius:10px;font-weight:800;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-top:10px;width:100%;justify-content:center}
+.wa-btn:hover{background:#20ba5a}
+</style>
+</head>
+<body>
+<div class="header">
+  <button class="btn" onclick="window.location.href='index.html'" title="Kembali">←</button>
+  <div class="title">
+    <b>🏪 KONTER A YUDI THEA</b>
+    <small>KONTER 2026 • Baris 3-14 Fixed</small>
+  </div>
+  <button class="btn" onclick="loadAllData()" title="Refresh">↻</button>
+</div>
+
+<div class="container">
+<div class="card">
+  <div class="tabs-wrap">
+    <div class="tabs">
+      <button id="b1" class="active" onclick="tab(1)">💳 TOTAL TAGIHAN<br><small style="font-weight:500;font-size:9px">Baris 3-14</small></button>
+      <button id="b2" onclick="tab(2)">🛒 RINCIAN BELANJA<br><small style="font-weight:500;font-size:9px" id="periode-text">Jumat-Kamis</small></button>
+    </div>
+  </div>
+
+  <div id="t1">
+    <div class="card-head">
+      <h3>📋 DATA TAGIHAN TEKNISI MAJA</h3>
+      <span class="badge badge-blue" id="count-tagihan">0 Baris</span>
+    </div>
+    <div id="error-tagihan"></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>NAMA</th><th style="text-align:right">TAGIHAN</th><th style="text-align:right">DENDA 5%</th><th style="text-align:right">PEMBAYARAN</th><th style="text-align:right">SISA</th></tr>
+        </thead>
+        <tbody id="data-tagihan">
+          <tr><td colspan="5" class="loading">Loading data tagihan...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="rekening-box">
+      <h4>💳 Info Pembayaran</h4>
+      <div class="rekening-row">
+        <span class="label">Bank</span>
+        <span class="value">MANDIRI</span>
+      </div>
+      <div class="rekening-row">
+        <span class="label">No. Rekening</span>
+        <span class="value">
+          1340033268904
+          <button class="copy-btn" onclick="copyRek()">Salin</button>
+        </span>
+      </div>
+      <div class="rekening-row">
+        <span class="label">Atas Nama</span>
+        <span class="value">YUDI ALIYUDIN</span>
+      </div>
+      <a href="https://wa.me/6282319264646?text=Halo%20Kang%20Yudi,%20saya%20sudah%20transfer%20tagihan.%20Berikut%20bukti%20transfernya:" target="_blank" class="wa-btn">
+        📱 Konfirmasi via WhatsApp
+      </a>
+      <div style="font-size:10px;opacity:.8;margin-top:8px;text-align:center">Kirim bukti transfer ke 082319264646</div>
+    </div>
+  </div>
+
+  <div id="t2" style="display:none">
+    <div class="info-period" id="info-periode">Periode: Loading...</div>
+    <div class="card-head">
+      <h3>🛒 RINCIAN BELANJA MINGGU INI</h3>
+      <span class="badge badge-green" id="count-rincian">0 Transaksi</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Tanggal</th><th>NAMA</th><th>PRODUK</th></tr>
+        </thead>
+        <tbody id="data-rincian">
+          <tr><td colspan="3" class="loading">Loading data rincian...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="footer">© 2026 Konter A Yudi Thea • Auto refresh tiap 2 menit • <span id="last-update">-</span></div>
+</div>
+
+<script>
+const URL_TAGIHAN = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTAP_R50frV13whqx54ctjplc-8xhcN53rHEVk5mkhLeZE283xWnr6TdTBFr-KFymEiaYE_NWgGthpo/pub?gid=2045267299&single=true&output=csv';
+const URL_RINCIAN = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTAP_R50frV13whqx54ctjplc-8xhcN53rHEVk5mkhLeZE283xWnr6TdTBFr-KFymEiaYE_NWgGthpo/pub?gid=1930633596&single=true&output=csv';
+
+function tab(n){
+  document.getElementById('t1').style.display=n==1?'block':'none';
+  document.getElementById('t2').style.display=n==2?'block':'none';
+  document.getElementById('b1').className=n==1?'active':'';
+  document.getElementById('b2').className=n==2?'active':'';
+}
+
+function copyRek() {
+  navigator.clipboard.writeText('1340033268904');
+  const btn = event.target;
+  const old = btn.textContent;
+  btn.textContent = '✓ Tersalin';
+  setTimeout(() => btn.textContent = old, 2000);
+}
+
+function parseCSV(text) {
+  const rows = [];
+  let currentRow = [];
+  let currentCell = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const nextChar = text[i + 1];
+    
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        currentCell += '"';
+        i++;
+      } else {
+        inQuotes =!inQuotes;
+      }
+    } else if (char === ',' &&!inQuotes) {
+      currentRow.push(currentCell.trim());
+      currentCell = '';
+    } else if (char === '\n' &&!inQuotes) {
+      currentRow.push(currentCell.trim());
+      if (currentRow.some(cell => cell!== '')) rows.push(currentRow);
+      currentRow = [];
+      currentCell = '';
+    } else {
+      currentCell += char;
+    }
+  }
+  
+  if (currentCell || currentRow.length > 0) {
+    currentRow.push(currentCell.trim());
+    if (currentRow.some(cell => cell!== '')) rows.push(currentRow);
+  }
+  
+  return rows;
+}
+
+function getLastFridayToThursday() {
+  const today = new Date();
+  const day = today.getDay();
+  const diff = day >= 5? day - 5 : day + 2;
+  const friday = new Date(today);
+  friday.setDate(today.getDate() - diff);
+  friday.setHours(0,0,0,0);
+  
+  const thursday = new Date(friday);
+  thursday.setDate(friday.getDate() + 6);
+  thursday.setHours(23,59,59,999);
+  
+  return {friday, thursday};
+}
+
+function parseDate(dateStr) {
+  const parts = dateStr.split(/[\/\-]/);
+  if(parts.length === 3) {
+    return new Date(parts[2], parts[1]-1, parts[0]);
+  }
+  return null;
+}
+
+async function loadTagihan() {
+  try {
+    const res = await fetch(URL_TAGIHAN);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    
+    const text = await res.text();
+    if(text.includes('<!DOCTYPE html>')) throw new Error('Sheet belum di-publish ke CSV');
+    
+    const rows = parseCSV(text);
+    
+    // BUANG BARIS 1 & 2, AMBIL BARIS 3-14 = INDEX 2-13
+    rows.splice(0, 2);
+    const dataRows = rows.slice(0, 12);
+
+    let html = '';
+    let count = 0;
+
+    dataRows.forEach(row => {
+      const colA = row[0] || '';
+      const colB = row[1] || '';
+      const colC = row[2] || '';
+      const colD = row[3] || '';
+      const colE = row[4] || '';
+
+      if(colA) {
+        count++;
+        const isTotal = colA.toLowerCase().includes('jumlah');
+        html += `<tr class="${isTotal? 'total' : ''}">
+          <td>${colA}</td>
+          <td class="num">${colB}</td>
+          <td class="num">${colC}</td>
+          <td class="num">${colD}</td>
+          <td class="num">${colE}</td>
+        </tr>`;
+      }
+    });
+
+    document.getElementById('data-tagihan').innerHTML = html || '<tr><td colspan="5" class="empty">Data kosong</td></tr>';
+    document.getElementById('count-tagihan').textContent = count + ' Baris';
+    document.getElementById('error-tagihan').innerHTML = '';
+  } catch(e) {
+    console.error('Error loadTagihan:', e);
+    document.getElementById('data-tagihan').innerHTML = '<tr><td colspan="5" class="empty">Gagal load data</td></tr>';
+    document.getElementById('error-tagihan').innerHTML = `<div class="error-box">Error: ${e.message}</div>`;
+  }
+}
+
+async function loadRincian() {
+  try {
+    const {friday, thursday} = getLastFridayToThursday();
+    const formatTgl = (d) => d.toLocaleDateString('id-ID', {day:'2-digit',month:'short'});
+    document.getElementById('info-periode').textContent = `Periode: Jumat ${formatTgl(friday)} - Kamis ${formatTgl(thursday)} 2026`;
+    document.getElementById('periode-text').textContent = `${formatTgl(friday)} - ${formatTgl(thursday)}`;
+
+    const res = await fetch(URL_RINCIAN);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    rows.shift();
+
+    let html = '';
+    let count = 0;
+
+    rows.reverse().forEach((row, idx) => {
+      if(row[0] && row[0].trim()!== '') {
+        const tanggal = parseDate(row[0]);
+        if(tanggal && tanggal >= friday && tanggal <= thursday) {
+          count++;
+          html += `<tr>
+            <td style="white-space:nowrap">${row[0] || ''}</td>
+            <td>${row[1] || ''}</td>
+            <td>${row[2] || ''}</td>
+          </tr>`;
+        }
+      }
+    });
+
+    document.getElementById('data-rincian').innerHTML = html || '<tr><td colspan="3" class="empty">Tidak ada transaksi minggu ini</td></tr>';
+    document.getElementById('count-rincian').textContent = count + ' Transaksi';
+  } catch(e) {
+    document.getElementById('data-rincian').innerHTML = '<tr><td colspan="3" class="empty">Gagal load data</td></tr>';
+  }
+}
+
+function updateTime() {
+  const now = new Date();
+  document.getElementById('last-update').textContent = 'Update: ' + now.toLocaleTimeString('id-ID');
+}
+
+function loadAllData() {
+  loadTagihan();
+  loadRincian();
+  updateTime();
+}
+
+loadAllData();
+setInterval(loadAllData, 120000);
+</script>
+</body>
+</html>

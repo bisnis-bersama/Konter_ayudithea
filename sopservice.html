@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SOP Servis HP - Konter A Yudi Thea</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{background:#eaf3ff;color:#0b1a33;transition:.3s;line-height:1.6}
+header{background:linear-gradient(135deg,#005bea,#008cff);color:#fff;text-align:center;padding:18px 20px;box-shadow:0 6px 20px rgba(0,0,0,.3);position:sticky;top:0;z-index:10}
+header h1{font-size:22px} header p{opacity:.9;font-size:13px;margin-top:4px}
+.theme-box{position:absolute;right:15px;top:14px}
+#themeSelect{padding:6px 12px;border-radius:20px;border:2px solid #fff;background:#fff;color:#005bea;font-weight:700;font-size:12px;cursor:pointer}
+.container{max-width:1050px;margin:auto;padding:16px}
+.back{display:inline-flex;align-items:center;gap:6px;margin:10px 0 16px;text-decoration:none;color:#fff;background:linear-gradient(#29a7ff,#0066cc);padding:10px 18px;border-radius:12px;font-weight:bold;box-shadow:0 4px 0 #003d80}
+.back:active{transform:translateY(3px);box-shadow:0 1px 0 #003d80}
+.card{background:#fff;border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 8px 18px rgba(0,0,0,.12);border:1px solid #e6eefc}
+.card.hero{background:linear-gradient(135deg,#0b6ef3,#00c6ff);color:#fff;border:none}
+.card.hero h2{color:#fff}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);margin-right:4px}
+h2{color:#0066cc;font-size:18px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+h3{font-size:14px;margin:14px 0 8px}
+ul,ol{padding-left:18px} li{margin-bottom:7px;font-size:14px}
+.search-box{position:relative;margin:12px 0}
+.search-box input{width:100%;padding:12px 14px 12px 40px;border-radius:12px;border:2px solid #dbeafe;background:#f8fbff;outline:none}
+.search-box input:focus{border-color:#0b6ef3;box-shadow:0 0 0 4px rgba(11,110,243,.15)}
+.search-box span{position:absolute;left:12px;top:50%;transform:translateY(-50%)}
+.toc{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.toc a{text-decoration:none;font-size:12px;background:#f1f5ff;padding:9px 10px;border-radius:10px;color:#0b6ef3;font-weight:600;border:1px solid #dbeafe}
+.toc a:hover{background:#0b6ef3;color:#fff}
+
+/* FLOW */
+.flow{display:flex;gap:8px;overflow:auto;padding:10px 0}
+.flow-step{min-width:130px;background:#fff;border:1px solid #e6eefc;border-radius:12px;padding:10px;text-align:center;flex-shrink:0;box-shadow:0 3px 10px rgba(0,0,0,.05)}
+.flow-step b{display:block;font-size:12px;margin-top:4px}
+.flow-arrow{display:grid;place-items:center;opacity:.4;font-weight:bold}
+
+/* SOP */
+.sop{border:1px solid #e6eefc;border-radius:14px;margin-bottom:12px;overflow:hidden;background:#fff;transition:.2s}
+.sop.open{border-color:#0b6ef3;box-shadow:0 6px 16px rgba(11,110,243,.12)}
+.sop-head{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:linear-gradient(#fff,#f8fbff);user-select:none}
+.sop-head b{font-size:14px;display:flex;align-items:center;gap:10px}
+.sop-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.sop-body{display:none;padding:0 16px 18px}
+.sop.open .sop-body{display:block}
+.sop-arrow{transition:.2s}
+.sop.open .sop-arrow{transform:rotate(90deg)}
+.tag{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:700}
+.tag-wajib{background:#e6fbe9;color:#00b050;border:1px solid #a6e9b1}
+.tag-risk{background:#fff4e6;color:#d48800;border:1px solid #ffd699}
+.tag-larang{background:#ffe9e9;color:#ff3b30;border:1px solid #ffb3b3}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.info{padding:10px 12px;border-radius:10px;font-size:13px;margin:8px 0}
+.info.blue{background:#eef4ff;border:1px solid #c7d8ff;color:#0b3d91}
+.info.yellow{background:#fff8e6;border:1px solid #ffe7a3;color:#7a5a00}
+.info.red{background:#fff0f0;border:1px solid #ffc2c2;color:#7a0000}
+.info.green{background:#eefaf0;border:1px solid #b3e6b8;color:#0a5a1a}
+.check{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:13px}
+.check input{margin-top:4px}
+.kbd{display:inline-block;padding:2px 6px;border-radius:6px;background:#eef2ff;border:1px solid #c7d8ff;font-size:11px;font-family:monospace}
+table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px}
+th,td{border:1px solid #e6eefc;padding:8px;text-align:left}
+th{background:#f1f5ff;color:#0b1a33}
+footer{text-align:center;padding:20px;color:#6b7a99;font-size:12px}
+
+/* DARK */
+body.dark{background:#121212;color:#e9e9e9}
+body.dark header{background:linear-gradient(#1e1e1e,#111)}
+body.dark .card,body.dark .sop,body.dark .flow-step{background:#1e1e1e;border-color:#333;box-shadow:none}
+body.dark .sop-head{background:#242424}
+body.dark h2{color:#6cb8ff} body.dark h3{color:#fff}
+body.dark .search-box input{background:#2a2a2a;border-color:#444;color:#fff}
+body.dark .toc a{background:#2a2a2a;border-color:#444;color:#8ab4ff}
+body.dark th{background:#2a2a2a;border-color:#333} body.dark td{border-color:#333}
+body.dark .info.blue{background:#1e2a4a;border-color:#2d4a8a;color:#a8c6ff}
+body.dark .info.yellow{background:#3a2e12;border-color:#6a5a2a;color:#ffde8a}
+body.dark .info.red{background:#3a1a1a;border-color:#6a2a2a;color:#ff8a8a}
+body.dark .info.green{background:#1a2e1e;border-color:#2a5a2a;color:#8aff9a}
+body.dark .back{background:#333;box-shadow:0 4px 0 #111}
+body.dark .card.hero{background:linear-gradient(135deg,#222,#333)}
+
+@media(max-width:700px){
+.theme-box{position:static;text-align:right;margin-bottom:8px}
+.container{padding:10px}
+.toc{grid-template-columns:1fr}
+.grid2{grid-template-columns:1fr}
+.flow{padding-bottom:6px}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="theme-box">
+<select id="themeSelect" onchange="gantiTema(this.value)">
+<option value="auto">📱 Auto</option>
+<option value="light">☀️ Light</option>
+<option value="dark">🌙 Dark</option>
+</select>
+</div>
+<h1>🔧 SOP SERVIS HP PELANGGAN</h1>
+<p>Konter A Yudi Thea • Teknisi Wajib Ikuti Urutan Ini</p>
+</header>
+
+<div class="container">
+<a href="index.html" class="back">⬅ Dashboard</a>
+
+<div class="card hero">
+<h2>🎯 Prinsip Utama Servis</h2>
+<p style="margin-top:8px;font-size:14px;opacity:.95">Kerjakan HP orang seperti HP sendiri. <b>Foto dulu, izin dulu, baru bongkar.</b> Semua kerusakan & biaya wajib dijelaskan di awal agar tidak ada komplain garansi.</p>
+<div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px">
+<span class="badge">📸 Foto Sebelum Bongkar</span>
+<span class="badge">📝 Nota Tertulis</span>
+<span class="badge">✅ Test Depan Pelanggan</span>
+<span class="badge">🛡️ Garansi Jelas</span>
+</div>
+
+<div class="flow" style="margin-top:16px">
+<div class="flow-step">📥<b>Terima</b></div><div class="flow-arrow">›</div>
+<div class="flow-step">🔍<b>Diagnosa</b></div><div class="flow-arrow">›</div>
+<div class="flow-step">💬<b>Izin Harga</b></div><div class="flow-arrow">›</div>
+<div class="flow-step">🔧<b>Kerjakan</b></div><div class="flow-arrow">›</div>
+<div class="flow-step">🧪<b>QC Test</b></div><div class="flow-arrow">›</div>
+<div class="flow-step">🤝<b>Serah Terima</b></div>
+</div>
+</div>
+
+<div class="card">
+<div class="search-box"><span>🔍</span><input id="cariSOP" placeholder="Cari: lcd, garansi, dp, baterai, air..." oninput="filterSOP()"></div>
+<div class="toc">
+<a href="#terima">1. Penerimaan HP</a>
+<a href="#diagnosa">2. Diagnosa & Estimasi</a>
+<a href="#izin">3. Izin & DP</a>
+<a href="#pengerjaan">4. Pengerjaan</a>
+<a href="#lcd">5. Khusus Ganti LCD</a>
+<a href="#baterai">6. Baterai & Hardware</a>
+<a href="#software">7. Software / Flash</a>
+<a href="#qc">8. QC 15 Point</a>
+<a href="#serah">9. Serah Terima</a>
+<a href="#garansi">10. Garansi & Komplain</a>
+<a href="#tidakdiambil">11. HP Tidak Diambil</a>
+<a href="#larangan">12. Larangan Teknisi</a>
+</div>
+</div>
+
+<!-- 1 -->
+<div class="sop open" id="terima">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#e8f0ff">📥</div> 1. SOP Penerimaan HP (Intake) <span class="tag tag-wajib">WAJIB FOTO</span></b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<div class="grid2">
+<div>
+<h3>Checklist Wajib Ditanya:</h3>
+<ul>
+<li>Nama, No WA, Tipe HP (contoh: Vivo Y12)</li>
+<li>Keluhan detail + kronologi (jatuh / kena air / mati total)</li>
+<li>Password / PIN / Pola (jika perlu test) → tulis di nota & tutup rapat</li>
+<li>Kelengkapan: HP saja / + sim / + memori / + cas</li>
+<li>Minta izin untuk bongkar & resiko</li>
+</ul>
+<div class="info blue"><b>Kalimat Wajib:</b> <span class="kbd">"Kak, sebelum dicek saya foto dulu kondisi HP nya ya, biar sama-sama enak."</span></div>
+</div>
+<div>
+<h3>Checklist Foto (Sebelum Bongkar):</h3>
+<div class="check"><input type="checkbox"> <span>Foto depan layar nyala/mati</span></div>
+<div class="check"><input type="checkbox"> <span>Foto belakang & frame samping (cek penyok)</span></div>
+<div class="check"><input type="checkbox"> <span>Foto segel baut / stiker garansi (jika ada)</span></div>
+<div class="check"><input type="checkbox"> <span>Foto kondisi LCD (retak / tompel / garis)</span></div>
+<div class="check"><input type="checkbox"> <span>Foto IMEI (dial *#06#)</span></div>
+<div class="info yellow">Simpan foto di folder WA pelanggan / album Servis. Jangan dihapus sampai 1 bulan.</div>
+</div>
+</div>
+<table>
+<tr><th>Kondisi Awal</th><th>Kode di Nota</th></tr>
+<tr><td>LCD retak</td><td>Tulis: LCD RETAK AWAL</td></tr>
+<tr><td>Kemasukan air</td><td>Tulis: KEMASUKAN AIR - RESIKO MATOT</td></tr>
+<tr><td>Pernah servis tempat lain</td><td>Tulis: PERNAH BONGKAR / SEGEL HILANG</td></tr>
+</table>
+</div>
+</div>
+
+<!-- 2 -->
+<div class="sop" id="diagnosa">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#fff4e6">🔍</div> 2. Diagnosa & Estimasi Biaya</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li>Bongkar dengan alas anti-statis, matikan HP, lepas baterai jika bisa</li>
+<li>Cek berurutan: Baterai > Konektor > LCD > Mesin > Software</li>
+<li>Jangan langsung vonis IC, cek yang ringan dulu (konektor kotor, baterai drop)</li>
+<li>Catat temuan di nota: contoh <span class="kbd">Cek: Soket LCD korosi, tegangan batre 3.2V</span></li>
+</ul>
+<div class="grid2">
+<div class="info blue"><b>Estimasi Wajib Sebut 3 Hal:</b><br>1. Biaya total<br>2. Waktu jadi (1 jam / 1 hari / 2-3 hari)<br>3. Resiko (contoh: fingerprint bisa off, data hilang jika flash)</div>
+<div class="info yellow"><b>Khusus HP Kena Air:</b> Jangan langsung cas! Bongkar, keringkan, bersihkan korosi pakai thinner / cleaner. Bilang ke pelanggan: <span class="kbd">50% hidup, 50% matot, tidak bisa garansi.</span></div>
+</div>
+</div>
+</div>
+
+<!-- 3 -->
+<div class="sop" id="izin">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#e6f9f5">💬</div> 3. Izin Harga, DP & Nota Servis</b><span class="tag tag-wajib">WAJIB NOTA</span><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li>Konfirmasi harga via WA / langsung, jangan asal kerjakan jika di atas Rp150rb</li>
+<li>Jika sparepart mahal (LCD >200rb), wajib minta DP minimal 50%</li>
+<li>Nota servis wajib ada: Tgl masuk, Nama, Tipe HP, Keluhan, Estimasi biaya, DP, TTD pelanggan</li>
+<li>Berikan 1 lembar nota ke pelanggan, 1 simpan di konter</li>
+</ul>
+<div class="info green"><b>Contoh Kalimat Izin:</b> "Kak Yanti, setelah dicek LCD harus ganti. Biaya LCD OG Rp280 + jasa Rp30 = Rp310. Garansi toko 3 hari. Lanjut ya kak?" — tunggu balasan OK baru kerjakan.</div>
+</div>
+</div>
+
+<!-- 4 -->
+<div class="sop" id="pengerjaan">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#f3e8ff">🔧</div> 4. SOP Pengerjaan Umum</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li>Gunakan tools yang benar: obeng magnet, pinset, blower suhu 350°C max untuk LCD</li>
+<li>Lepas baut simpan di wadah magnet, jangan tercecer</li>
+<li>Jangan congkel LCD pakai besi tajam, pakai mika tipis</li>
+<li>Bersihkan sisa lem lama sampai bersih sebelum pasang LCD baru</li>
+<li>Lem LCD pakai B7000 / T7000 secukupnya, jangan bleber ke kamera / sensor</li>
+<li>Pasang karet / lakban 2-3 jam agar presisi</li>
+</ul>
+<div class="info red"><b>JANGAN:</b> Solder sambil ngobrol, bongkar sambil cas HP, atau paksa baut dol.</div>
+</div>
+</div>
+
+<!-- 5 -->
+<div class="sop" id="lcd">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#ffe8e8">📱</div> 5. Khusus Ganti LCD / Touchscreen</b><span class="tag tag-risk">RESIKO TINGGI</span><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ol>
+<li>Test LCD baru sebelum lem: nyalakan, cek sentuh semua sisi, warna, brightness</li>
+<li>Jika LCD KW / Incell: jelaskan ke pelanggan perbedaan OG vs KW di awal</li>
+<li>Pasang segel garansi toko kecil di dalam (jangan tutup baut)</li>
+<li>Setelah lem, jangan langsung serah terima. Diamkan minimal 30 menit, test ulang</li>
+<li>Catat merk LCD di nota: contoh <span class="kbd">LCD Y12 OG - Zevan</span></li>
+</ol>
+<div class="info yellow"><b>Garansi LCD TIDAK berlaku jika:</b> Pecah / retak / ketekan / kemasukan air / segel garansi lepas.</div>
+</div>
+</div>
+
+<!-- 6 -->
+<div class="sop" id="baterai">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#e6fbe9">🔋</div> 6. Baterai, Konektor & Hardware Lain</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li>Baterai: cek tegangan pakai avometer, jika <3.5V coba tembak baterai dulu</li>
+<li>Konektor cas: bersihkan debu, jangan langsung ganti papan cas jika masih bisa dibersihkan</li>
+<li>IC / MMC: jika harus ACP / reball, konfirmasi dulu resiko matot ke pelanggan</li>
+<li>Simpan baterai bekas pelanggan, kasih lihat sebagai bukti ganti</li>
+</ul>
+</div>
+</div>
+
+<!-- 7 -->
+<div class="sop" id="software">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#e8f7ff">💾</div> 7. Software, Flash, FRP, Pola</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li>Wajib tanya: <b>"Data penting gak kak? Flash akan hapus semua data"</b></li>
+<li>Untuk FRP / Pola: minta bukti kepemilikan (kardus / nota beli / foto KTP + HP)</li>
+<li>Jangan terima HP curian, jika ragu tolak halus</li>
+<li>Catat versi Android sebelum flash, simpan file di folder backup</li>
+</ul>
+<div class="info red"><b>Dilarang:</b> Buka pola HP pasangan tanpa izin, atau intip galeri / WA pelanggan. Pelanggaran berat = SP3.</div>
+</div>
+</div>
+
+<!-- 8 -->
+<div class="sop" id="qc">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#fff4e6">🧪</div> 8. QC Test - 15 Point Wajib Sebelum Serah Terima</b><span class="tag tag-wajib">WAJIB TEST</span><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<div class="grid2">
+<div>
+<div class="check"><input type="checkbox"> 1. Layar sentuh full (gambar pola L)</div>
+<div class="check"><input type="checkbox"> 2. Warna & brightness normal</div>
+<div class="check"><input type="checkbox"> 3. Speaker musik & telepon</div>
+<div class="check"><input type="checkbox"> 4. Mic telepon & rekam</div>
+<div class="check"><input type="checkbox"> 5. Kamera depan & belakang</div>
+<div class="check"><input type="checkbox"> 6. Sinyal & data internet</div>
+<div class="check"><input type="checkbox"> 7. Wifi & Bluetooth</div>
+<div class="check"><input type="checkbox"> 8. Cas masuk & tidak panas berlebih</div>
+</div>
+<div>
+<div class="check"><input type="checkbox"> 9. Tombol power, volume</div>
+<div class="check"><input type="checkbox"> 10. Fingerprint / Face Unlock</div>
+<div class="check"><input type="checkbox"> 11. Getar</div>
+<div class="check"><input type="checkbox"> 12. Sensor proximity (telp layar mati)</div>
+<div class="check"><input type="checkbox"> 13. GPS / Maps</div>
+<div class="check"><input type="checkbox"> 14. Baterai tidak boros (test 10 menit)</div>
+<div class="check"><input type="checkbox"> 15. Body rapat, tidak renggang, baut lengkap</div>
+</div>
+</div>
+<div class="info green">Jika semua OK, tulis di nota: <span class="kbd">QC OK 15 Point - Teknisi: [Nama]</span></div>
+</div>
+</div>
+
+<!-- 9 -->
+<div class="sop" id="serah">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#e8f0ff">🤝</div> 9. Penyerahan ke Pelanggan</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ol>
+<li>Panggil pelanggan, test HP <b>di depan pelanggan</b> minimal 3 point: sentuh, sinyal, kamera</li>
+<li>Jelaskan garansi: berapa hari, apa yang dicover</li>
+<li>Berikan nota lunas + kartu garansi (jika ada)</li>
+<li>Input ke pembukuan: tanggal, karyawan, total, pengeluaran (jika beli sparepart)</li>
+<li>Minta pelanggan tanda tangan / konfirmasi WA "Sudah diambil & normal"</li>
+</ol>
+<div class="info blue">Kalimat penutup: <span class="kbd">"Kak, ini sudah normal semua, garansi 3 hari ya. Kalau ada apa-apa bawa nota nya aja. Makasih kak!"</span></div>
+</div>
+</div>
+
+<!-- 10 -->
+<div class="sop" id="garansi">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#fff8e6">🛡️</div> 10. Garansi & Penanganan Komplain</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<table>
+<tr><th>Jenis</th><th>Garansi Toko</th><th>Tidak Garansi Jika</th></tr>
+<tr><td>Ganti LCD</td><td>3 hari - fungsi & sentuh</td><td>Pecah, retak, ketekan, air, segel lepas</td></tr>
+<tr><td>Baterai</td><td>7 hari - drop / kembung</td><td>HP kena air, cas tidak ori overheat</td></tr>
+<tr><td>Service mesin</td><td>3 hari - keluhan sama berulang</td><td>Jatuh lagi, kena air lagi</td></tr>
+<tr><td>Software / Flash</td><td>3 hari - bootloop lagi (bukan kesalahan user)</td><td>Salah update, install apk berbahaya</td></tr>
+</table>
+<ul style="margin-top:10px">
+<li>Komplain wajib bawa nota + segel masih utuh</li>
+<li>Teknisi tidak boleh debat dengan pelanggan, panggil pemilik jika pelanggan marah</li>
+<li>Jika kesalahan teknisi (LCD lepas, lem tidak rapi) = garansi penuh, kerjakan ulang gratis</li>
+</ul>
+</div>
+</div>
+
+<!-- 11 -->
+<div class="sop" id="tidakdiambil">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#f3e8ff">📦</div> 11. HP Tidak Diambil & Privacy Data</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li>HP jadi >1 hari: WA pelanggan "Kak HP sudah jadi"</li>
+<li>Tidak diambil >7 hari: WA kedua + telepon</li>
+<li>>30 hari tidak diambil: simpan di laci terkunci, foto & catat di buku. Toko tidak bertanggung jawab jika hilang setelah 30 hari (sampaikan di nota awal)</li>
+<li><b>Privacy:</b> Dilarang buka galeri, WA, file pelanggan. Jika butuh test kamera, pakai foto objek meja servis saja</li>
+<li>Hapus password/pola pelanggan setelah selesai jika diminta</li>
+</ul>
+</div>
+</div>
+
+<!-- 12 -->
+<div class="sop" id="larangan">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#ffe9e9">🚫</div> 12. Larangan Keras Teknisi</b><span class="tag tag-larang">PHK</span><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li>Dilarang tukar sparepart pelanggan dengan yang KW tanpa izin (tukar baterai ori dengan KW, dll)</li>
+<li>Dilarang intip / copy data pribadi pelanggan</li>
+<li>Dilarang terima suap untuk dahulukan antrian tanpa izin pemilik</li>
+<li>Dilarang servis HP curian (tidak ada bukti kepemilikan untuk buka pola/FRP)</li>
+<li>Dilarang pakai blower / solder tanpa alas, atau meninggalkan solder nyala</li>
+</ul>
+<div class="info red"><b>Sanksi:</b> Pelanggaran larangan keras = langsung SP3 / PHK + ganti rugi.</div>
+</div>
+</div>
+
+<div class="card">
+<h2>📝 Formulir Singkat Penerimaan (Contoh Nota)</h2>
+<div style="font-size:13px;background:#f8fbff;border:1px dashed #a8c6ff;padding:12px;border-radius:10px;line-height:1.8">
+<b>NOTA SERVIS - KONTER A YUDI THEA</b><br>
+Tgl Masuk: ___/___/2026 | Teknisi: ________<br>
+Nama: __________ No WA: __________<br>
+Tipe HP: __________ IMEI: __________<br>
+Keluhan: ______________________________<br>
+Kondisi Awal: [ ] Mulus [ ] Retak [ ] Penyok [ ] Segel hilang [ ] Kena air<br>
+Kelengkapan: [ ] HP saja [ ] + SIM [ ] + Memori [ ] + Dus<br>
+Estimasi: Rp _______ | DP: Rp _______ | Jadi: ___ hari<br>
+Password: __________ | Catatan: ________________<br>
+Tanda Tangan Pelanggan: ___________<br>
+<i>Syarat: Garansi 3 hari, tidak termasuk pecah/air. HP >30 hari tidak diambil bukan tanggung jawab toko.</i>
+</div>
+</div>
+
+</div>
+
+<footer>© 2026 Konter A Yudi Thea • SOP Servis HP v1.0</footer>
+
+<script>
+function toggleSOP(el){
+  const p=el.parentElement;
+  p.classList.toggle('open');
+}
+function filterSOP(){
+  const q=document.getElementById('cariSOP').value.toLowerCase();
+  document.querySelectorAll('.sop').forEach(s=>{
+    const txt=s.innerText.toLowerCase();
+    const show = txt.includes(q);
+    s.style.display = show ? 'block' : 'none';
+    if(q && show) s.classList.add('open');
+  });
+}
+const media = window.matchMedia("(prefers-color-scheme: dark)");
+function gantiTema(mode){
+  localStorage.setItem("tema",mode);
+  if(mode==="dark") document.body.classList.add("dark");
+  else if(mode==="light") document.body.classList.remove("dark");
+  else document.body.classList.toggle("dark",media.matches);
+}
+const tema=localStorage.getItem("tema")||"auto";
+document.getElementById("themeSelect").value=tema; gantiTema(tema);
+media.addEventListener("change",()=>{ if(localStorage.getItem("tema")==="auto") gantiTema("auto"); });
+</script>
+</body>
+</html>

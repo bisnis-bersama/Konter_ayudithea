@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Data Stok + Harga Jual - Konter A Yudi Thea</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{background:#eaf3ff;transition:all .3s}
+header{background:linear-gradient(135deg,#005bea,#008cff);color:#fff;padding:18px 20px;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.3);position:sticky;top:0;z-index:10}
+header h1{font-size:22px}
+header p{opacity:.9;font-size:13px;margin-top:4px}
+.theme-box{position:absolute;right:15px;top:14px}
+#themeSelect{padding:6px 10px;border-radius:20px;border:2px solid #fff;background:#fff;color:#005bea;font-weight:bold;font-size:12px;cursor:pointer}
+.container{max-width:1300px;margin:auto;padding:16px}
+.back{display:inline-flex;align-items:center;gap:6px;margin:10px 0 16px;text-decoration:none;color:#fff;background:linear-gradient(#29a7ff,#0066cc);padding:10px 18px;border-radius:12px;font-weight:bold;box-shadow:0 4px 0 #003d80;transition:.15s}
+.top-action{display:flex;gap:10px;margin:0 0 14px 0;flex-wrap:wrap}
+.btn-order-top{flex:1;min-width:260px;padding:14px 18px;border:none;background:#25D366;color:#fff;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 5px 0 #1da851, 0 8px 18px rgba(37,211,102,.3);transition:.15s}
+.btn-order-top:active{transform:translateY(4px);box-shadow:0 1px 0 #1da851}
+.btn-order-top span.badge-count{background:#fff;color:#25D366;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:800}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.stat-box{background:#fff;border-radius:16px;padding:16px;box-shadow:0 8px 18px rgba(0,0,0,.12);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:4px}
+.stat-box::after{content:'';position:absolute;top:0;right:0;width:70px;height:70px;border-radius:50%;opacity:.12;transform:translate(20px,-20px)}
+.stat-box.total::after{background:#005bea}
+.stat-box.ok::after{background:#00b050}
+.stat-box.empty::after{background:#ff3b30}
+.stat-box.value::after{background:#ff9800}
+.stat-label{font-size:12px;opacity:.7;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.stat-nilai{font-size:26px;font-weight:800;color:#0b1a33}
+.stat-box.ok .stat-nilai{color:#00b050}
+.stat-box.empty .stat-nilai{color:#ff3b30}
+.stat-box.value .stat-nilai{color:#0066cc}
+.stat-sub{font-size:11px;opacity:.6}
+.card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 8px 18px rgba(0,0,0,.12);margin-bottom:16px}
+.filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.filter-bar .field{flex:1;min-width:160px}
+.filter-bar input,.filter-bar select{width:100%;padding:11px 14px;border:2px solid #dbeafe;border-radius:12px;outline:none;font-size:14px;background:#f8fbff}
+.filter-bar .btn-reset{padding:11px 16px;border:none;background:#eef2ff;color:#0b6ef3;border-radius:12px;font-weight:bold;cursor:pointer}
+.btn-wa-small{padding:6px 10px;border-radius:20px;border:1px solid #25D366;background:#e6fbe9;color:#0b8a3a;font-size:11px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.table-wrap{overflow:auto;border-radius:12px;border:1px solid #e6eefc}
+table{width:100%;border-collapse:collapse;min-width:950px}
+th{background:linear-gradient(#0066cc,#0051a3);color:#fff;padding:12px 10px;font-size:13px;text-align:left;position:sticky;top:0;z-index:2;white-space:nowrap;cursor:pointer}
+td{padding:11px 10px;border-bottom:1px solid #eef3ff;font-size:13px;vertical-align:top}
+tr:hover td{background:#f0f7ff}
+.badge{padding:4px 9px;border-radius:20px;font-size:11px;font-weight:700;text-transform:lowercase;display:inline-block}
+.badge-merk{background:#eef2ff;color:#0b6ef3;border:1px solid #c7d8ff}
+.badge-ready{background:#e6fbe9;color:#00b050;border:1px solid #a6e9b1}
+.badge-kosong{background:#ffe9e9;color:#ff3b30;border:1px solid #ffb3b3}
+.badge-jual{background:#fff4ce;color:#b38a00;border:1px solid #f5e6a0;font-weight:800}
+.nama{font-weight:600;color:#0b1a33;line-height:1.3}
+.kode{font-family:monospace;background:#f1f5ff;padding:3px 6px;border-radius:6px;font-size:11px}
+.harga-jual{font-weight:800;color:#b38a00;background:#fffbe6;padding:4px 8px;border-radius:8px;border:1px dashed #f5e6a0;display:inline-block}
+.mobile-cards{display:none;grid-template-columns:1fr;gap:10px}
+.m-card{background:#fff;border:1px solid #e6eefc;border-radius:14px;padding:12px;box-shadow:0 3px 10px rgba(0,0,0,.06)}
+.m-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.m-nama{font-weight:700;font-size:13px;line-height:1.3;flex:1}
+.m-kode{font-size:10px;opacity:.6}
+.m-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;font-size:12px}
+.m-grid div{background:#f8fbff;padding:8px;border-radius:10px}
+.m-grid b{display:block;font-size:11px;opacity:.6;margin-bottom:2px}
+#loading{text-align:center;padding:30px;opacity:.6}
+body.dark{background:#121212;color:#e9e9e9}
+body.dark .stat-box,body.dark .card,body.dark .m-card{background:#1e1e1e;border-color:#333}
+body.dark .stat-nilai{color:#fff}
+body.dark .filter-bar input,body.dark .filter-bar select{background:#2a2a2a;border-color:#444;color:#fff}
+body.dark td{border-color:#2a2a2a;color:#ddd}
+body.dark .nama{color:#fff}
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.theme-box{position:static;text-align:right;margin-bottom:8px} .container{padding:10px} .filter-bar .field{min-width:100%} .table-wrap{display:none} .mobile-cards{display:grid} .back{width:100%;justify-content:center}}
+</style>
+</head>
+<body>
+<header>
+<div class="theme-box">
+<select id="themeSelect" onchange="gantiTema(this.value)">
+<option value="auto">📱 Auto</option>
+<option value="light">☀️ Light</option>
+<option value="dark">🌙 Dark</option>
+</select>
+</div>
+<h1>📦 DATA STOK BARANG</h1>
+<p>Konter A Yudi Thea • Harga Jual = Tunai x2 + 50rb • Live Spreadsheet</p>
+</header>
+<div class="container">
+<a class="back" href="index.html">⬅ Dashboard</a>
+<div class="top-action">
+<button class="btn-order-top" onclick="orderKosong()">
+💬 Order Barang Kosong ke WA 08388811600
+<span class="badge-count" id="badgeKosongTop">0 kosong</span>
+</button>
+</div>
+<div class="stats">
+<div class="stat-box total"><div class="stat-label">Total Produk</div><div class="stat-nilai" id="totalProduk">0</div><div class="stat-sub">semua SKU</div></div>
+<div class="stat-box ok"><div class="stat-label">Ready Stock</div><div class="stat-nilai" id="ready">0</div><div class="stat-sub">sisa > 0</div></div>
+<div class="stat-box empty"><div class="stat-label">Kosong</div><div class="stat-nilai" id="kosong">0</div><div class="stat-sub">perlu restock</div></div>
+<div class="stat-box value"><div class="stat-label">Nilai Stok</div><div class="stat-nilai" id="nilai">Rp0</div><div class="stat-sub">harga tunai x sisa</div></div>
+</div>
+<div class="card">
+<div class="filter-bar">
+<div class="field"><input id="cari" placeholder="🔍 Cari kode / nama barang..."></div>
+<div class="field" style="max-width:180px"><select id="merk"><option value="">Semua Merk</option></select></div>
+<div class="field" style="max-width:160px"><select id="status"><option value="">Semua Status</option><option value="ready">Ready Saja</option><option value="kosong">Kosong Saja</option></select></div>
+<div class="field" style="max-width:160px"><select id="sort"><option value="nama">Sort: Nama A-Z</option><option value="sisa-desc">Sisa Terbanyak</option><option value="harga-desc">Harga Termahal</option><option value="harga-jual-desc">Harga Jual Termahal</option></select></div>
+<button class="btn-reset" onclick="resetFilter()">Reset</button>
+</div>
+<div style="margin-top:10px;font-size:11px;opacity:.6">Rumus: <span class="badge badge-jual">Harga Jual = (Harga Tunai x 2) + Rp 50.000</span></div>
+<div id="loading">⏳ Memuat data stok...</div>
+<div class="table-wrap" id="tableWrap" style="display:none">
+<table>
+<thead>
+<tr>
+<th>Kode</th>
+<th>Nama Barang</th>
+<th>Harga Tunai</th>
+<th>Harga Jual<br><small style="opacity:.7;font-weight:400">x2+50rb</small></th>
+<th>Sisa</th>
+<th>Merk</th>
+<th>Status</th>
+<th>Aksi</th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+<div class="mobile-cards" id="mobileCards"></div>
+</div>
+</div>
+<script>
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTAP_R50frV13whqx54ctjplc-8xhcN53rHEVk5mkhLeZE283xWnr6TdTBFr-KFymEiaYE_NWgGthpo/pub?gid=2070671735&single=true&output=csv";
+const WA_NUMBER = "628388811600";
+let rows=[], filtered=[];
+
+function parseCSV(text){
+  const result=[]; let row=[], cur="", inQuotes=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i], next=text[i+1];
+    if(c==='"'){ if(inQuotes && next==='"'){ cur+='"'; i++; } else inQuotes=!inQuotes; }
+    else if(c===',' && !inQuotes){ row.push(cur); cur=""; }
+    else if((c==='\n'||c==='\r') && !inQuotes){ if(cur!==""||row.length>0){ row.push(cur); result.push(row); row=[]; cur=""; } if(c==='\r'&&next==='\n') i++; }
+    else cur+=c;
+  }
+  if(cur!==""||row.length>0){ row.push(cur); result.push(row); }
+  return result;
+}
+function toNumberRp(s){ if(!s) return 0; return parseInt(String(s).replace(/[^0-9]/g,""),10)||0; }
+function hitungJual(hargaTunai){ return hargaTunai*2 + 50000; }
+function buildWaLinkSingle(r){
+  const pesan = `Halo kak, mau order:\n${r.nama}\n\nTerima kasih - Konter A Yudi Thea`;
+  return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(pesan)}`;
+}
+
+fetch(CSV_URL).then(r=>r.text()).then(t=>{
+  const parsed = parseCSV(t.trim());
+  const dataRows = parsed.slice(1);
+  rows=[];
+  dataRows.forEach(c=>{
+    if(!c || c.length<4) return;
+    const kode = (c[0]||"").trim();
+    if(!kode || kode.toLowerCase().includes("kode") || kode==="#N/A") return;
+    const nama = (c[1]||"").trim();
+    if(!nama) return;
+    let harga= toNumberRp(c[3]);
+    if(harga===0){ for(let k=2;k<Math.min(6,c.length);k++){ const v=toNumberRp(c[k]); if(v>1000){harga=v; break;}} }
+    let sisa = parseFloat(String(c[6]||"0").replace(/[^0-9.-]/g,""))||0;
+    if(isNaN(sisa)) sisa=0;
+    const merk = (c[7]||"").trim().toLowerCase();
+    const merkFull = c[7]||"";
+    const status = (c[8]||"").trim();
+    const merkClean = merk.split("/")[0].trim().split(" ")[0].trim();
+    const hargaJual = hitungJual(harga);
+    rows.push({kode,nama,harga,hargaJual,sisa,merk:merkClean,merkFull,status});
+  });
+  const merkSet=[...new Set(rows.map(r=>r.merk).filter(Boolean))].sort();
+  const sel=document.getElementById("merk");
+  merkSet.forEach(m=>{ const o=document.createElement("option"); o.value=m; o.textContent=m; sel.appendChild(o); });
+  document.getElementById("loading").style.display="none";
+  document.getElementById("tableWrap").style.display="block";
+  render();
+}).catch(e=>{ document.getElementById("loading").innerHTML="❌ Gagal memuat data."; console.error(e); });
+
+function resetFilter(){ document.getElementById("cari").value=""; document.getElementById("merk").value=""; document.getElementById("status").value=""; document.getElementById("sort").value="nama"; render(); }
+
+function orderKosong(){
+  const kosongItems = filtered.filter(r=>r.sisa<=0);
+  if(kosongItems.length===0){ alert('Tidak ada barang kosong di filter saat ini.'); return; }
+  let pesan = `Halo kak, mau order barang kosong dari\nKonter A Yudi Thea\nDepan pasar hewan blok Jum'at Maja utara\nMaja - Majalengka\n\n`;
+  kosongItems.slice(0,100).forEach((r,i)=>{ pesan += `${i+1}. ${r.nama}\n`; });
+  if(kosongItems.length>100) pesan += `\n... dan ${kosongItems.length-100} item lainnya (total ${kosongItems.length} kosong)\n`;
+  pesan += `\nSemua produk per 2pcs ya. Terima kasih 🙏`;
+  const wa = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(pesan)}`;
+  window.open(wa,'_blank');
+}
+
+function render(){
+  const q=document.getElementById("cari").value.toLowerCase().trim();
+  const merk=document.getElementById("merk").value.toLowerCase();
+  const status=document.getElementById("status").value;
+  const sort=document.getElementById("sort").value;
+  filtered = rows.filter(r=>{
+    if(q && !(r.nama.toLowerCase().includes(q) || r.kode.toLowerCase().includes(q))) return false;
+    if(merk && r.merk!==merk) return false;
+    if(status==="ready" && r.sisa<=0) return false;
+    if(status==="kosong" && r.sisa>0) return false;
+    return true;
+  });
+  filtered.sort((a,b)=>{
+    if(sort==="nama") return a.nama.localeCompare(b.nama);
+    if(sort==="sisa-desc") return b.sisa - a.sisa;
+    if(sort==="harga-desc") return b.harga - a.harga;
+    if(sort==="harga-jual-desc") return b.hargaJual - a.hargaJual;
+    return 0;
+  });
+  let html="", mHtml="", ready=0, kosong=0, nilai=0;
+  rows.forEach(r=>{ if(r.sisa>0){ready++; nilai+=r.sisa*r.harga;} else kosong++; });
+  const fKosong = filtered.filter(r=>r.sisa<=0).length;
+  filtered.forEach(r=>{
+    const isReady = r.sisa>0;
+    const badgeMerk = r.merk ? `<span class="badge badge-merk">${r.merk}</span>` : `<span class="badge badge-merk" style="opacity:.4">-</span>`;
+    const badgeStatus = isReady ? `<span class="badge badge-ready">READY • ${r.sisa}</span>` : `<span class="badge badge-kosong">KOSONG</span>`;
+    const waLink = buildWaLinkSingle(r);
+    html+=`<tr>
+      <td><span style="font-family:monospace;background:#f1f5ff;padding:3px 6px;border-radius:6px;font-size:11px">${r.kode}</span></td>
+      <td><div class="nama">${r.nama}</div></td>
+      <td>Rp ${r.harga.toLocaleString('id-ID')}</td>
+      <td><span class="harga-jual">Rp ${r.hargaJual.toLocaleString('id-ID')}</span></td>
+      <td style="font-weight:700">${r.sisa}</td>
+      <td>${badgeMerk}</td>
+      <td>${badgeStatus}</td>
+      <td><a class="btn-wa-small" href="${waLink}" target="_blank">💬 Order</a></td>
+    </tr>`;
+    mHtml+=`<div class="m-card">
+      <div class="m-head"><div class="m-nama">${r.nama}<div style="font-size:10px;opacity:.6">${r.kode}</div></div>${badgeStatus}</div>
+      <div class="m-grid">
+        <div><b>Harga Tunai</b>Rp ${r.harga.toLocaleString('id-ID')}</div>
+        <div><b style="color:#b38a00">Harga Jual (x2+50rb)</b><span style="font-weight:800;color:#b38a00">Rp ${r.hargaJual.toLocaleString('id-ID')}</span></div>
+        <div><b>Sisa</b>${r.sisa} pcs</div>
+        <div><b>Merk</b>${r.merkFull||r.merk}</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">${badgeMerk}<a class="btn-wa-small" href="${waLink}" target="_blank">💬 Order</a></div>
+    </div>`;
+  });
+  document.getElementById("tbody").innerHTML = html || `<tr><td colspan="8" style="text-align:center;padding:20px;opacity:.6">Tidak ada barang</td></tr>`;
+  document.getElementById("mobileCards").innerHTML = mHtml;
+  document.getElementById("totalProduk").textContent = rows.length;
+  document.getElementById("ready").textContent = ready;
+  document.getElementById("kosong").textContent = kosong;
+  document.getElementById("nilai").textContent = "Rp "+nilai.toLocaleString('id-ID');
+  document.getElementById("badgeKosongTop").textContent = `${fKosong} kosong`;
+}
+document.getElementById("cari").addEventListener("input", render);
+document.getElementById("merk").addEventListener("change", render);
+document.getElementById("status").addEventListener("change", render);
+document.getElementById("sort").addEventListener("change", render);
+const media = window.matchMedia("(prefers-color-scheme: dark)");
+function gantiTema(mode){
+  localStorage.setItem("tema",mode);
+  if(mode==="dark") document.body.classList.add("dark");
+  else if(mode==="light") document.body.classList.remove("dark");
+  else document.body.classList.toggle("dark",media.matches);
+}
+const tema = localStorage.getItem("tema") || "auto";
+document.getElementById("themeSelect").value=tema; gantiTema(tema);
+media.addEventListener("change",()=>{ if(localStorage.getItem("tema")==="auto") gantiTema("auto"); });
+</script>
+</body>
+</html>

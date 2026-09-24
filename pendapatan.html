@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pendapatan + Penghasilan Luar - Konter A Yudi Thea</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#eaf3ff;transition:0.3s}
+header{background:linear-gradient(135deg,#005bea,#008cff);color:#fff;text-align:center;padding:18px;box-shadow:0 6px 15px rgba(0,0,0,.35)}
+.container{max-width:1150px;margin:auto;padding:15px}
+.tabs{display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap}
+.tab{flex:1;background:linear-gradient(#29a7ff,#0066cc);color:#fff;padding:14px;border-radius:12px;text-align:center;cursor:pointer;font-weight:bold;box-shadow:0 6px 0 #003d80;transition:0.2s}
+.tab.active{transform:translateY(4px);box-shadow:0 2px 0 #003d80;filter:brightness(1.1)}
+.list,.detail,.card-box{background:#fff;border-radius:16px;padding:15px;box-shadow:0 6px 15px rgba(0,0,0,.2);margin-bottom:15px}
+.item{padding:10px 12px;border-bottom:1px solid #eee;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.item:hover{background:#eef6ff}
+.badge{background:#0b6ef3;color:#fff;padding:3px 8px;border-radius:8px;font-size:11px;margin-left:6px}
+.badge.luar{background:#00b050}
+.badge.peng{background:#ff3b30}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid #ddd;padding:8px;font-size:13px}
+th{background:#0066cc;color:#fff;position:sticky;top:0}
+.hidden{display:none}
+.back{display:inline-block;margin:12px 0;text-decoration:none;color:#fff;background:#0066cc;padding:10px 16px;border-radius:10px}
+h3{margin:10px 0;color:#0066cc}
+.accordion{margin-bottom:12px;border-radius:12px;overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.15)}
+.judul{background:linear-gradient(#0b6ef3,#0056c7);color:#fff;padding:14px;border-radius:12px;cursor:pointer;font-weight:bold;display:flex;justify-content:space-between}
+.isi{padding:8px 10px;background:#fff}
+.ringkasan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:10px 0}
+.kartu{padding:12px;border-radius:12px;color:#fff;font-weight:bold}
+.kartu.pend{background:linear-gradient(135deg,#007bff,#00c6ff)}
+.kartu.luar{background:linear-gradient(135deg,#00b050,#8bc34a)}
+.kartu.total{background:linear-gradient(135deg,#6a11cb,#2575fc)}
+.kartu.peng{background:linear-gradient(135deg,#ff512f,#dd2476)}
+.kartu.laba{background:linear-gradient(135deg,#f7971e,#ffd200);color:#333}
+.kartu span{display:block;font-size:12px;font-weight:normal;opacity:0.9}
+.input-box{display:grid;grid-template-columns:1fr 2fr 1fr auto;gap:8px;margin-top:10px}
+.input-box input, .input-box button{padding:10px;border-radius:8px;border:1px solid #ccc}
+.input-box button{background:#00b050;color:#fff;font-weight:bold;border:none;cursor:pointer}
+.theme-box{text-align:right;padding:10px 15px}
+#themeSelect{padding:8px 12px;border-radius:10px;border:2px solid #0b6ef3}
+
+/* DARK */
+body.dark{background:#121212;color:#fff}
+body.dark header{background:linear-gradient(#2d2d2d,#1b1b1b)}
+body.dark .list,body.dark .detail,body.dark .isi,body.dark .card-box{background:#242424;color:#fff;border:1px solid #3a3a3a}
+body.dark .judul{background:linear-gradient(#3a3a3a,#2b2b2b)}
+body.dark .item{color:#fff;border-bottom:1px solid #444}
+body.dark .item:hover{background:#333}
+body.dark table{background:#242424;color:#fff}
+body.dark th{background:#3b3b3b}
+body.dark td{border-color:#444}
+body.dark .tab{background:linear-gradient(#3a3a3a,#2b2b2b)}
+body.dark .back{background:#3a3a3a}
+body.dark h3{color:#6cb8ff}
+body.dark .input-box input{background:#333;color:#fff;border-color:#555}
+
+@media(max-width:700px){
+.tab{font-size:12px;padding:10px 4px}
+.detail{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{min-width:650px}
+th,td{white-space:nowrap}
+.input-box{grid-template-columns:1fr 1fr; }
+.input-box input:nth-child(3){grid-column:span 2}
+.input-box button{grid-column:span 2}
+}
+</style>
+</head>
+<body>
+<header>
+ <div style="text-align:right;padding:5px 15px;">
+ <select id="themeSelect" onchange="gantiTema(this.value)">
+    <option value="auto">📱 Auto</option>
+    <option value="light">☀️ Light</option>
+    <option value="dark">🌙 Dark</option>
+ </select>
+ </div>
+ <h1>💰 Pendapatan + Luar</h1><p>Konter A Yudi Thea</p>
+</header>
+
+<div class="container">
+<a class="back" href="index.html">⬅ Dashboard</a>
+
+<!-- INPUT PENGHASILAN LUAR -->
+<div class="card-box">
+<h3>➕ Input Penghasilan di Luar (disimpan di HP ini)</h3>
+<p style="font-size:12px;opacity:0.7;margin-bottom:8px;">Kalau kamu punya Google Sheet untuk penghasilan luar, isi URL CSV di kode (LUAR_CSV_URL). Kalau tidak, pakai input manual ini — otomatis kehitung harian/bulanan/tahunan.</p>
+<div class="input-box">
+<input type="date" id="luarTgl">
+<input type="text" id="luarKet" placeholder="Sumber: misal Jual Pulsa, Service luar, dll">
+<input type="number" id="luarNom" placeholder="Nominal">
+<button onclick="tambahLuar()">Simpan</button>
+</div>
+<div style="margin-top:10px;font-size:12px;opacity:0.8">Data luar tersimpan: <span id="jmlLuar">0</span> transaksi | Total: Rp <span id="totLuar">0</span></div>
+</div>
+
+<div class="tabs">
+<div class="tab active" id="tab-harian" onclick="setMode('harian')">📅 Harian</div>
+<div class="tab" id="tab-bulanan" onclick="setMode('bulanan')">📆 Bulanan</div>
+<div class="tab" id="tab-tahunan" onclick="setMode('tahunan')">📈 Tahunan</div>
+</div>
+
+<div class="list">
+<h3 id="judul">Daftar</h3>
+<div id="menu"></div>
+</div>
+
+<div class="detail" style="margin-top:15px">
+<h3 id="judulDetail">Detail</h3>
+<div id="ringkasan"></div>
+<div class="ringkasan-grid" id="gridRingkasan"></div>
+
+<h3 style="margin-top:15px;">📦 Transaksi Konter</h3>
+<table>
+<thead><tr><th>Tanggal</th><th>Karyawan</th><th>Pelanggan</th><th>Produk</th><th>Total</th><th>Pengeluaran</th></tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+
+<h3 style="margin-top:18px;">💸 Penghasilan di Luar (per tanggal terpilih)</h3>
+<table>
+<thead><tr><th>Tanggal</th><th>Sumber / Keterangan</th><th>Nominal</th><th>Aksi</th></tr></thead>
+<tbody id="tbodyLuar"></tbody>
+</table>
+</div>
+</div>
+
+<script>
+// ==== CONFIG ====
+// Isi jika punya sheet terpisah untuk penghasilan luar (publish as CSV)
+// Contoh: "https://docs.google.com/spreadsheets/d/e/xxx/pub?gid=yyy&single=true&output=csv"
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTAP_R50frV13whqx54ctjplc-8xhcN53rHEVk5mkhLeZE283xWnr6TdTBFr-KFymEiaYE_NWgGthpo/pub?gid=1848020631&single=true&output=csv";
+const LUAR_CSV_URL=""; // <-- ISI URL CSV PENGHASILAN LUAR KALAU ADA, BIARKAN KOSONG JIKA PAKAI INPUT MANUAL
+
+let data=[], dataLuar=[], mode="harian", currentVal="";
+
+function formatRp(n){return "Rp "+Number(n||0).toLocaleString('id-ID')}
+function parseTanggal(tglStr){
+  // tglStr format DD/MM/YYYY
+  if(!tglStr) return null;
+  const p=tglStr.split("/");
+  if(p.length!==3) return null;
+  return {
+    d: p[0].padStart(2,'0'),
+    m: p[1],
+    mNum: Number(p[1]),
+    y: p[2],
+    bulanNama: p[1], // nanti kita pakai angka bulan juga
+    tgl: tglStr.trim()
+  }
+}
+
+// LOAD DATA UTAMA + LUAR
+async function loadAll(){
+  const mainText = await fetch(CSV_URL).then(r=>r.text());
+  parseMain(mainText);
+
+  if(LUAR_CSV_URL){
+    try{
+      const luarText = await fetch(LUAR_CSV_URL).then(r=>r.text());
+      parseLuarCSV(luarText);
+    }catch(e){ console.log("gagal load luar csv", e); loadLuarLocal(); }
+  }else{
+    loadLuarLocal();
+  }
+  renderList();
+  updateLuarInfo();
+}
+
+function parseMain(t){
+  data=[];
+  const rows=t.trim().split(/\r?\n/);
+  for(let i=1;i<rows.length;i++){
+    const line=rows[i];
+    if(!line.trim()) continue;
+    
+    // PARSER ANTI-KOMA - handle "reno 8, kabel data + batok"
+    let c = [];
+    let currentCell = '';
+    let inQuotes = false;
+    
+    for (let j = 0; j < line.length; j++) {
+      const char = line[j];
+      const nextChar = line[j + 1];
+      
+      if (char === '"') {
+        if (inQuotes && nextChar === '"') {
+          currentCell += '"';
+          j++;
+        } else {
+          inQuotes =!inQuotes;
+        }
+      } else if (char === ',' &&!inQuotes) {
+        c.push(currentCell.trim());
+        currentCell = '';
+      } else {
+        currentCell += char;
+      }
+    }
+    c.push(currentCell.trim());
+    
+    if(c.length<13) continue;
+    const tgl=(c[0]||"").trim();
+    if(!tgl.includes("/")) continue;
+    const p=tgl.split("/");
+    if(p.length<3) continue;
+    
+    // MAPPING KOLOM SESUAI SCREENSHOT KAMU
+    data.push({
+      tanggal:tgl, // A = TANGGAL
+      hari:c[1]||"", // B = HARI
+      bulan:p[1]||"", // C = BULAN
+      bulanNama:c[2]||p[1], // C = BULAN
+      tahun:p[2]||"", // D = TAHUN
+      karyawan:c[4]||"", // E = KARYAWAN
+      pelanggan:c[5]||"", // F = NAMA PELANGGAN
+      produk:c[8]||"", // I = KODE PRODUK
+      total:Number((c[11]||"0").replace(/[^0-9.-]/g,""))||0, // L = TOTAL HARGA
+      peng:Number((c[12]||"0").replace(/[^0-9.-]/g,""))||0 // M = PENGELUARAN
+    });
+  }
+}
+
+function loadLuarLocal(){
+  dataLuar = JSON.parse(localStorage.getItem("penghasilanLuar")||"[]");
+}
+
+function saveLuarLocal(){
+  localStorage.setItem("penghasilanLuar", JSON.stringify(dataLuar));
+  updateLuarInfo();
+}
+
+function updateLuarInfo(){
+  const tot = dataLuar.reduce((a,b)=>a+b.total,0);
+  document.getElementById("jmlLuar").textContent = dataLuar.length;
+  document.getElementById("totLuar").textContent = tot.toLocaleString('id-ID');
+}
+
+function tambahLuar(){
+  const tglInput = document.getElementById("luarTgl").value; // yyyy-mm-dd
+  const ket = document.getElementById("luarKet").value.trim();
+  const nom = Number(document.getElementById("luarNom").value)||0;
+  if(!tglInput || !nom){ alert("Isi tanggal dan nominal dulu"); return; }
+  const d = new Date(tglInput);
+  const tglStr = String(d.getDate()).padStart(2,'0')+"/"+String(d.getMonth()+1).padStart(2,'0')+"/"+d.getFullYear();
+  const p = tglStr.split("/");
+  const entry = {tanggal:tglStr, bulan:p[1], tahun:p[2], sumber: ket||"Penghasilan Luar", total:nom, from:"local", id:Date.now()};
+  dataLuar.push(entry);
+  saveLuarLocal();
+  document.getElementById("luarKet").value=""; document.getElementById("luarNom").value="";
+  renderList();
+  if(currentVal) lihat(currentVal); // refresh detail jika sedang lihat tanggal yang sama
+  alert("Penghasilan luar disimpan!");
+}
+
+function hapusLuar(id){
+  if(!confirm("Hapus penghasilan luar ini?")) return;
+  dataLuar = dataLuar.filter(x=>x.id!==id);
+  saveLuarLocal();
+  renderList();
+  if(currentVal) lihat(currentVal);
+}
+
+// ===== RENDER LIST =====
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+m).classList.add('active');
+  renderList();
+}
+
+function uniq(a){return [...new Set(a)]}
+
+function renderList(){
+  menu.innerHTML="";
+  if(mode==="harian"){
+    renderHarian(); judul.textContent="📅 Harian - Klik bulan untuk lihat tanggal (sudah termasuk luar)";
+    return;
+  } else if(mode==="bulanan"){
+    const bulanSet = uniq([...data.map(x=>x.bulan+"|"+x.tahun), ...dataLuar.map(x=>x.bulan+"|"+x.tahun)]).sort();
+    judul.textContent="📆 Bulanan (Konter + Luar)";
+    bulanSet.forEach(key=>{
+      if(!key.includes("|")) return;
+      const [b,th]=key.split("|");
+      const rowsKonter = data.filter(x=>x.bulan===b && x.tahun===th);
+      const rowsLuar = dataLuar.filter(x=>x.bulan===b && x.tahun===th);
+      const totKonter = rowsKonter.reduce((a,c)=>a+c.total,0);
+      const totLuar = rowsLuar.reduce((a,c)=>a+c.total,0);
+      const peng = rowsKonter.reduce((a,c)=>a+c.peng,0);
+      const div=document.createElement("div");
+      div.className="item";
+      div.innerHTML=`<span>📆 Bulan ${b}-${th} <span class="badge">${rowsKonter.length} trx</span> ${rowsLuar.length?`<span class="badge luar">Luar: ${rowsLuar.length}</span>`:""}</span><span>${formatRp(totKonter+totLuar)} <small style="opacity:.6">(${formatRp(totKonter)}+${formatRp(totLuar)})</small></span>`;
+      div.onclick=()=>lihat(key, true);
+      menu.appendChild(div);
+    });
+  } else {
+    const tahunSet = uniq([...data.map(x=>x.tahun), ...dataLuar.map(x=>x.tahun)]).sort();
+    judul.textContent="📈 Tahunan (Konter + Luar)";
+    tahunSet.forEach(th=>{
+      if(!th) return;
+      const rowsKonter = data.filter(x=>x.tahun===th);
+      const rowsLuar = dataLuar.filter(x=>x.tahun===th);
+      const totKonter = rowsKonter.reduce((a,c)=>a+c.total,0);
+      const totLuar = rowsLuar.reduce((a,c)=>a+c.total,0);
+      const div=document.createElement("div");
+      div.className="item";
+      div.innerHTML=`<span>📈 Tahun ${th} <span class="badge">${rowsKonter.length} trx</span> ${rowsLuar.length?`<span class="badge luar">Luar: ${formatRp(totLuar)}</span>`:""}</span><span>${formatRp(totKonter+totLuar)}</span>`;
+      div.onclick=()=>lihat(th);
+      menu.appendChild(div);
+    });
+  }
+}
+
+function renderHarian(){
+  const bulanMap={};
+  const allTanggal = [...data, ...dataLuar];
+  allTanggal.forEach(item=>{
+    const key=item.bulan+"-"+item.tahun;
+    if(!bulanMap[key]) bulanMap[key]=[];
+    if(!bulanMap[key].includes(item.tanggal)) bulanMap[key].push(item.tanggal);
+  });
+  Object.keys(bulanMap).sort().forEach(key=>{
+    const box=document.createElement("div");
+    box.className="accordion";
+    box.innerHTML=`<div class="judul" onclick="toggle('${key}')"><span>▶ ${key}</span><span id="sum-${key}" style="font-size:12px;opacity:0.9"></span></div><div class="isi" id="${key}" style="display:none"></div>`;
+    menu.appendChild(box);
+    const isi=document.getElementById(key);
+    // hitung total per bulan buat header accordion
+    const [b,th]=key.split("-");
+    const totK = data.filter(x=>x.bulan===b && x.tahun===th).reduce((a,c)=>a+c.total,0);
+    const totL = dataLuar.filter(x=>x.bulan===b && x.tahun===th).reduce((a,c)=>a+c.total,0);
+    document.getElementById("sum-"+key).textContent = formatRp(totK+totL);
+
+    [...new Set(bulanMap[key])].sort((a,b)=>{
+      const pa=a.split("/"); const pb=b.split("/");
+      return new Date(pa[2],pa[1]-1,pa[0]) - new Date(pb[2],pb[1]-1,pb[0]);
+    }).forEach(tgl=>{
+      const rk = data.filter(x=>x.tanggal===tgl);
+      const rl = dataLuar.filter(x=>x.tanggal===tgl);
+      const tk = rk.reduce((a,c)=>a+c.total,0);
+      const tl = rl.reduce((a,c)=>a+c.total,0);
+      const pk = rk.reduce((a,c)=>a+c.peng,0);
+      const laba = (tk+tl)-pk;
+      isi.innerHTML+=`<div class="item" onclick="lihat('${tgl}')">
+        <span>📅 ${tgl} <span class="badge">${rk.length}</span> ${rl.length?`<span class="badge luar">+${formatRp(tl)} luar</span>`:""}</span>
+        <span style="font-size:12px;text-align:right">Konter ${formatRp(tk)}<br>${rl.length?`Luar ${formatRp(tl)} | `:""}Laba ${formatRp(laba)}</span>
+      </div>`;
+    });
+  });
+}
+
+function toggle(id){
+  const x=document.getElementById(id);
+  x.style.display = x.style.display==="none" ? "block" : "none";
+}
+
+// ===== LIHAT DETAIL =====
+function lihat(val, isBulanTahunGabungan=false){
+  currentVal=val;
+  let rows=[], rowsLuar=[];
+  if(mode==="harian" && !isBulanTahunGabungan){
+    rows=data.filter(x=>x.tanggal===val);
+    rowsLuar=dataLuar.filter(x=>x.tanggal===val);
+  } else if(mode==="bulanan" || isBulanTahunGabungan){
+    // val format "MM|YYYY" atau "MM-YYYY"
+    let b, th;
+    if(val.includes("|")){ [b,th]=val.split("|"); } else { [b,th]=val.split("-"); }
+    rows=data.filter(x=>x.bulan===b && x.tahun===th);
+    rowsLuar=dataLuar.filter(x=>x.bulan===b && x.tahun===th);
+  } else {
+    rows=data.filter(x=>x.tahun===val);
+    rowsLuar=dataLuar.filter(x=>x.tahun===val);
+  }
+
+  let pendKonter=0, peng=0, pendLuar=0;
+  tbody.innerHTML=""; tbodyLuar.innerHTML="";
+
+  rows.forEach(r=>{
+    pendKonter+=r.total; peng+=r.peng;
+    tbody.innerHTML+=`<tr><td>${r.tanggal}</td><td>${r.karyawan}</td><td>${r.pelanggan}</td><td>${r.produk}</td><td>${formatRp(r.total)}</td><td>${formatRp(r.peng)}</td></tr>`;
+  });
+
+  rowsLuar.forEach(r=>{
+    pendLuar+=r.total;
+    const btn = r.id ? `<button onclick="hapusLuar(${r.id})" style="padding:4px 8px;border:none;background:#ff3b30;color:#fff;border-radius:6px;cursor:pointer">Hapus</button>` : "-";
+    tbodyLuar.innerHTML+=`<tr><td>${r.tanggal}</td><td>${r.sumber}</td><td>${formatRp(r.total)}</td><td>${btn}</td></tr>`;
+  });
+
+  if(rowsLuar.length===0) tbodyLuar.innerHTML=`<tr><td colspan="4" style="text-align:center;opacity:0.6">Tidak ada penghasilan luar di periode ini</td></tr>`;
+  if(rows.length===0) tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;opacity:0.6">Tidak ada transaksi konter</td></tr>`;
+
+  const totalPend = pendKonter + pendLuar;
+  const laba = totalPend - peng;
+
+  judulDetail.textContent = val;
+  document.getElementById("gridRingkasan").innerHTML=`
+    <div class="kartu pend"><span>Pendapatan Konter</span>${formatRp(pendKonter)}</div>
+    <div class="kartu luar"><span>Penghasilan Luar</span>${formatRp(pendLuar)}</div>
+    <div class="kartu total"><span>Total Pendapatan (Konter+Luar)</span>${formatRp(totalPend)}</div>
+    <div class="kartu peng"><span>Pengeluaran</span>${formatRp(peng)}</div>
+    <div class="kartu laba"><span>Laba Bersih (Total - Pengeluaran)</span>${formatRp(laba)}</div>
+  `;
+  ringkasan.innerHTML=`<b>Transaksi Konter:</b> ${rows.length} &nbsp; | &nbsp; <b>Transaksi Luar:</b> ${rowsLuar.length} &nbsp; | &nbsp; <b>Periode:</b> ${val}`;
+}
+
+// THEME
+const media = window.matchMedia("(prefers-color-scheme: dark)");
+function gantiTema(mode){
+    localStorage.setItem("tema",mode);
+    if(mode==="dark") document.body.classList.add("dark");
+    else if(mode==="light") document.body.classList.remove("dark");
+    else document.body.classList.toggle("dark",media.matches);
+}
+const tema = localStorage.getItem("tema") || "auto";
+document.getElementById("themeSelect").value=tema; gantiTema(tema);
+media.addEventListener("change",()=>{ if(localStorage.getItem("tema")==="auto") gantiTema("auto"); });
+
+loadAll();
+</script>
+</body>
+</html>

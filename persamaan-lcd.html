@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LCD - Final Clean</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{background:#eaf3ff}
+header{background:linear-gradient(135deg,#005bea,#008cff);color:#fff;padding:18px 20px;text-align:center;position:sticky;top:0;z-index:10}
+header h1{font-size:20px}
+.container{max-width:1200px;margin:auto;padding:14px}
+.back{display:inline-flex;align-items:center;gap:6px;margin:8px 0 12px;text-decoration:none;color:#fff;background:linear-gradient(#29a7ff,#0066cc);padding:8px 14px;border-radius:10px;font-weight:bold;font-size:12px}
+.card{background:#fff;border-radius:14px;padding:14px;box-shadow:0 6px 14px rgba(0,0,0,.08)}
+.filter-bar{display:flex;gap:8px}
+.filter-bar input{flex:1;padding:11px 14px;border:2px solid #dbeafe;border-radius:10px;background:#f8fbff;outline:none;font-size:13px}
+.filter-bar input:focus{border-color:#0b6ef3;background:#fff}
+.table-wrap{overflow:auto;border-radius:10px;border:1px solid #e6eefc;margin-top:12px}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th{background:#005bea;color:#fff;padding:11px 10px;font-size:11px;text-align:left;position:sticky;top:0}
+td{padding:10px 10px;border-bottom:1px solid #eef3ff;font-size:12px}
+tr:hover td{background:#f0f7ff}
+.kode{font-family:monospace;background:#f1f5ff;padding:3px 7px;border-radius:5px;font-weight:700}
+.harga-e{font-weight:700;color:#005bea}
+.harga-f{font-weight:800;color:#fff;background:#00b050;padding:4px 10px;border-radius:12px;display:inline-block}
+.badge-v{background:#f3e8ff;color:#7c3aed;padding:3px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.mobile-cards{display:none;grid-template-columns:1fr;gap:8px;margin-top:10px}
+.m-card{background:#fff;border:1px solid #e6eefc;border-radius:12px;padding:12px}
+@media(max-width:600px){.table-wrap{display:none}.mobile-cards{display:grid}}
+</style>
+</head>
+<body>
+<header><h1>📱 PERSAMAAN LCD</h1></header>
+<div class="container">
+<a class="back" href="index.html">⬅ Dashboard</a>
+<div class="card">
+<div class="filter-bar"><input id="cari" placeholder="🔍 Cari..."></div>
+<div class="table-wrap" id="tableWrap" style="display:none">
+<table>
+<thead><tr><th>A - Kode</th><th>B - Nama LCD</th><th>E - Modal</th><th>F - Jual (E×2+70rb)</th><th>V</th></tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+<div class="mobile-cards" id="mobileCards"></div>
+<div id="loading" style="text-align:center;padding:24px;opacity:.6">Memuat...</div>
+</div>
+</div>
+<script>
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTAP_R50frV13whqx54ctjplc-8xhcN53rHEVk5mkhLeZE283xWnr6TdTBFr-KFymEiaYE_NWgGthpo/pub?gid=694779852&single=true&output=csv";
+let rows=[];
+function parseCSV(t){const r=[];let row=[],cur="",q=false;for(let i=0;i<t.length;i++){const c=t[i],n=t[i+1];if(c==='"'){if(q&&n==='"'){cur+='"';i++;}else q=!q;}else if(c===','&&!q){row.push(cur);cur="";}else if((c==='\n'||c==='\r')&&!q){if(cur!==""||row.length>0){row.push(cur);r.push(row);row=[];cur="";}if(c==='\r'&&n==='\n')i++;}else cur+=c;}if(cur!==""||row.length>0){row.push(cur);r.push(row);}return r;}
+function toNum(s){
+  if(!s) return 0;
+  const up=String(s).toUpperCase();
+  if(up.includes("#VALUE")||up.includes("#REF")||up.includes("#ERROR")||up.includes("#N/A")) return 0;
+  return parseInt(up.replace(/[^0-9]/g,''),10)||0;
+}
+function formatRp(n){return "Rp "+Number(n||0).toLocaleString('id-ID');}
+
+fetch(CSV_URL).then(r=>r.text()).then(t=>{
+  const parsed=parseCSV(t.trim()); const data=parsed.slice(1); rows=[];
+  data.forEach(c=>{
+    const kode=(c[0]||'').trim();
+    const nama=(c[1]||'').trim();
+    const eRaw=(c[4]||'').trim();
+    const vRaw=(c[21]||'').trim() || (c[22]||'').trim() || '-';
+    if(!kode&&!nama) return;
+    const eVal=toNum(eRaw);
+    if(eVal===0) return; // HILANGKAN YANG #VALUE! / 0 - LANGSUNG SKIP, TIDAK TAMPIL
+    const fVal=eVal*2+70000;
+    rows.push({kode,nama,eVal,fVal,vRaw});
+  });
+  rows.sort((a,b)=>a.fVal-b.fVal);
+  document.getElementById("loading").style.display="none";
+  document.getElementById("tableWrap").style.display="block";
+  render();
+});
+
+function render(){
+  const q=document.getElementById("cari").value.toLowerCase().trim();
+  let filtered=rows.filter(r=>!q||r.kode.toLowerCase().includes(q)||r.nama.toLowerCase().includes(q)||String(r.eVal).includes(q)||String(r.fVal).includes(q)||r.vRaw.toLowerCase().includes(q));
+  let html="", mHtml="";
+  filtered.forEach(r=>{
+    html+=`<tr><td><span class="kode">${r.kode}</span></td><td>${r.nama}</td><td><span class="harga-e">${formatRp(r.eVal)}</span></td><td><span class="harga-f">${formatRp(r.fVal)}</span></td><td><span class="badge-v">${r.vRaw}</span></td></tr>`;
+    mHtml+=`<div class="m-card"><div class="kode">${r.kode}</div><div style="font-weight:700;margin:6px 0">${r.nama}</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><span class="harga-e" style="background:#e8f0ff;padding:4px 8px;border-radius:8px">${formatRp(r.eVal)}</span><span class="harga-f">${formatRp(r.fVal)}</span><span class="badge-v">${r.vRaw}</span></div></div>`;
+  });
+  document.getElementById("tbody").innerHTML=html||`<tr><td colspan="5" style="text-align:center;padding:20px;opacity:.5">Tidak ada data</td></tr>`;
+  document.getElementById("mobileCards").innerHTML=mHtml;
+}
+document.getElementById("cari").addEventListener("input", render);
+</script>
+</body>
+</html>

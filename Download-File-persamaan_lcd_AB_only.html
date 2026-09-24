@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Persamaan LCD - Konter A Yudi Thea (A & B Only)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{background:#eaf3ff;transition:.3s}
+header{background:linear-gradient(135deg,#005bea,#008cff);color:#fff;padding:18px 20px;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.3);position:sticky;top:0;z-index:10}
+header h1{font-size:22px}
+header p{opacity:.9;font-size:13px;margin-top:4px}
+.theme-box{position:absolute;right:15px;top:14px}
+#themeSelect{padding:6px 10px;border-radius:20px;border:2px solid #fff;background:#fff;color:#005bea;font-weight:bold;font-size:12px;cursor:pointer}
+.container{max-width:1000px;margin:auto;padding:16px}
+.back{display:inline-flex;align-items:center;gap:6px;margin:10px 0 16px;text-decoration:none;color:#fff;background:linear-gradient(#29a7ff,#0066cc);padding:10px 18px;border-radius:12px;font-weight:bold;box-shadow:0 4px 0 #003d80}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px}
+.stat-box{background:#fff;border-radius:16px;padding:16px;box-shadow:0 8px 18px rgba(0,0,0,.12)}
+.stat-label{font-size:12px;opacity:.7;text-transform:uppercase;font-weight:600}
+.stat-nilai{font-size:26px;font-weight:800;color:#0b1a33}
+.card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 8px 18px rgba(0,0,0,.12);margin-bottom:16px}
+.filter-bar{display:flex;gap:10px}
+.filter-bar input{width:100%;padding:12px 16px;border:2px solid #dbeafe;border-radius:12px;outline:none;font-size:14px;background:#f8fbff}
+.filter-bar input:focus{border-color:#0b6ef3;background:#fff;box-shadow:0 0 0 4px rgba(11,110,243,.15)}
+.info-bar{margin-top:12px;font-size:12px;opacity:.7}
+.table-wrap{overflow:auto;border-radius:12px;border:1px solid #e6eefc;margin-top:12px}
+table{width:100%;border-collapse:collapse;min-width:600px}
+th{background:linear-gradient(#0066cc,#0051a3);color:#fff;padding:12px 14px;font-size:13px;text-align:left;position:sticky;top:0}
+td{padding:12px 14px;border-bottom:1px solid #eef3ff;font-size:13px;vertical-align:top}
+tr:hover td{background:#f0f7ff}
+.kode{font-family:monospace;background:#f1f5ff;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:700}
+.nama{font-weight:600;color:#0b1a33;line-height:1.4}
+.nama .highlight{background:#ffeb3b;padding:1px 4px;border-radius:4px}
+.persamaan{font-size:11px;opacity:.7;margin-top:6px;display:flex;flex-wrap:wrap;gap:4px}
+.persamaan span{background:#f8fbff;border:1px solid #e6eefc;padding:2px 7px;border-radius:10px;font-size:10px}
+.mobile-cards{display:none;grid-template-columns:1fr;gap:10px;margin-top:12px}
+.m-card{background:#fff;border:1px solid #e6eefc;border-radius:14px;padding:14px;box-shadow:0 3px 10px rgba(0,0,0,.06)}
+.m-kode{font-family:monospace;font-size:11px;opacity:.6;background:#f1f5ff;padding:3px 6px;border-radius:6px;display:inline-block;margin-bottom:6px}
+.m-nama{font-weight:700;font-size:14px}
+body.dark{background:#121212;color:#e9e9e9}
+body.dark .stat-box,body.dark .card,body.dark .m-card{background:#1e1e1e;border-color:#333;box-shadow:none}
+body.dark .filter-bar input{background:#2a2a2a;border-color:#444;color:#fff}
+body.dark td{border-color:#2a2a2a}
+body.dark .kode{background:#2a2a2a}
+body.dark .nama{color:#fff}
+@media(max-width:600px){
+.theme-box{position:static;text-align:right;margin-bottom:8px}
+.table-wrap{display:none}
+.mobile-cards{display:grid}
+.container{padding:10px}
+.stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="theme-box">
+<select id="themeSelect" onchange="gantiTema(this.value)">
+<option value="auto">📱 Auto</option>
+<option value="light">☀ Light</option>
+<option value="dark">🌙 Dark</option>
+</select>
+</div>
+<h1>🔍 PERSAMAAN LCD HP</h1>
+<p>Kolom A & B Only • Live Sheet CRV gid 694779852</p>
+</header>
+
+<div class="container">
+<a class="back" href="index.html">⬅ Dashboard</a>
+
+<div class="stats">
+<div class="stat-box"><div class="stat-label">Total Tipe (Kolom A)</div><div class="stat-nilai" id="totalProduk">0</div><div class="stat-label" style="font-size:11px;margin-top:4px">dari kolom A & B saja</div></div>
+<div class="stat-box"><div class="stat-label">Hasil Filter</div><div class="stat-nilai" id="hasilFilter" style="color:#005bea">0</div><div class="stat-label" style="font-size:11px;margin-top:4px" id="subHasil">-</div></div>
+</div>
+
+<div class="card">
+<div class="filter-bar">
+<input id="cari" placeholder="🔍 Cari Kode / Tipe HP... mis: Y20, A3S, C51, HOT 10...">
+</div>
+<div class="info-bar"><span id="infoHasil">Memuat data kolom A & B...</span> <span id="infoUpdate"></span></div>
+
+<div id="loading" style="text-align:center;padding:30px;opacity:.6">⏳ Memuat data dari Sheet gid 694779852 (hanya kolom A & B)...</div>
+
+<div class="table-wrap" id="tableWrap" style="display:none">
+<table>
+<thead>
+<tr>
+<th style="width:140px">Kolom A - Kode</th>
+<th>Kolom B - Nama LCD + Persamaan</th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+
+<div class="mobile-cards" id="mobileCards"></div>
+</div>
+
+<div class="card" style="border:1px dashed #0b6ef3;background:#f0f7ff">
+<p style="font-size:12px;line-height:1.5"><b>✅ Sudah dirapikan:</b> Sekarang hanya menampilkan <b>Kolom A (Kode)</b> dan <b>Kolom B (Nama LCD)</b> saja dari Sheet CRV.<br>
+- Pencarian bekerja di kedua kolom.<br>
+- Persamaan otomatis dipecah dari kolom B (split by / + )<br>
+- Source: <code>gid=694779852 • A & B only</code></p>
+</div>
+
+</div>
+
+<script>
+// LINK BARU - HANYA KOLOM A & B dari gid 694779852
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTAP_R50frV13whqx54ctjplc-8xhcN53rHEVk5mkhLeZE283xWnr6TdTBFr-KFymEiaYE_NWgGthpo/pub?gid=694779852&single=true&output=csv";
+let rows=[], filtered=[];
+
+function parseCSV(text){
+  const result=[]; let row=[], cur="", inQuotes=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i], next=text[i+1];
+    if(c==='"'){ if(inQuotes && next==='"'){ cur+='"'; i++; } else inQuotes=!inQuotes; }
+    else if(c===',' && !inQuotes){ row.push(cur); cur=""; }
+    else if((c==='\n'||c==='\r') && !inQuotes){ if(cur!==""||row.length>0){ row.push(cur); result.push(row); row=[]; cur=""; } if(c==='\r'&&next==='\n') i++; }
+    else cur+=c;
+  }
+  if(cur!==""||row.length>0){ row.push(cur); result.push(row); }
+  return result;
+}
+function parsePersamaan(nama){
+  let clean = nama.replace(/LCD\s*/i,'').trim();
+  let parts = clean.split(/[\/\+]/).map(s=>s.trim()).filter(Boolean);
+  return parts;
+}
+
+fetch(CSV_URL).then(r=>r.text()).then(t=>{
+  const parsed = parseCSV(t.trim());
+  // Ambil mulai dari baris 1 (skip header), hanya kolom 0 dan 1
+  const dataRows = parsed.slice(1);
+  rows=[];
+  dataRows.forEach(c=>{
+    if(!c || c.length < 1) return;
+    const kode = (c[0]||"").trim(); // KOLOM A
+    const nama = (c[1]||"").trim(); // KOLOM B
+    if(!kode && !nama) return; // skip kosong total
+    // Tetap tampilkan walau nama tidak mengandung LCD, karena mau A & B only
+    rows.push({kode: kode || '-', nama: nama || '-', persamaan: parsePersamaan(nama)});
+  });
+
+  document.getElementById("loading").style.display="none";
+  document.getElementById("tableWrap").style.display="block";
+  document.getElementById("infoUpdate").textContent=" • Update: "+new Date().toLocaleString('id-ID')+" • Source: CRV gid=694779852 (A&B)";
+  render();
+}).catch(e=>{
+  document.getElementById("loading").innerHTML="❌ Gagal memuat data. Cek koneksi / link CSV.";
+  console.error(e);
+});
+
+function render(){
+  const q=document.getElementById("cari").value.toLowerCase().trim();
+
+  filtered = rows.filter(r=>{
+    if(!q) return true;
+    return r.kode.toLowerCase().includes(q) || r.nama.toLowerCase().includes(q) || r.persamaan.join(' ').toLowerCase().includes(q);
+  });
+
+  // Sort A-Z by kode
+  filtered.sort((a,b)=> a.kode.localeCompare(b.kode) || a.nama.localeCompare(b.nama));
+
+  let html="", mHtml="";
+  filtered.forEach(r=>{
+    let namaHtml = r.nama;
+    let kodeHtml = r.kode;
+    if(q){
+      const regex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi');
+      namaHtml = r.nama.replace(regex,'<span class="highlight">$1</span>');
+      kodeHtml = r.kode.replace(regex,'<span class="highlight">$1</span>');
+    }
+    const persamaanChips = r.persamaan.slice(0,15).map(p=>`<span>${p}</span>`).join('');
+    html+=`<tr>
+      <td><span class="kode">${kodeHtml}</span></td>
+      <td><div class="nama">${namaHtml}</div><div class="persamaan">${persamaanChips}</div></td>
+    </tr>`;
+    mHtml+=`<div class="m-card">
+      <div class="m-kode">${kodeHtml}</div>
+      <div class="m-nama">${namaHtml}</div>
+      <div class="persamaan" style="margin-top:8px">${persamaanChips}</div>
+    </div>`;
+  });
+
+  document.getElementById("tbody").innerHTML = html || `<tr><td colspan="2" style="text-align:center;padding:20px;opacity:.6">Tidak ada data untuk "${q}"</td></tr>`;
+  document.getElementById("mobileCards").innerHTML = mHtml || `<div style="text-align:center;opacity:.6;padding:20px">Tidak ada data</div>`;
+  document.getElementById("totalProduk").textContent = rows.length;
+  document.getElementById("hasilFilter").textContent = filtered.length;
+  document.getElementById("subHasil").textContent = q ? `filter: "${q}"` : 'semua data';
+  document.getElementById("infoHasil").textContent = `${filtered.length} dari ${rows.length} data (Kolom A & B)`;
+}
+
+document.getElementById("cari").addEventListener("input", render);
+
+const media = window.matchMedia("(prefers-color-scheme: dark)");
+function gantiTema(mode){
+  localStorage.setItem("tema",mode);
+  if(mode==="dark") document.body.classList.add("dark");
+  else if(mode==="light") document.body.classList.remove("dark");
+  else document.body.classList.toggle("dark",media.matches);
+}
+const tema = localStorage.getItem("tema") || "auto";
+document.getElementById("themeSelect").value=tema; gantiTema(tema);
+media.addEventListener("change",()=>{ if(localStorage.getItem("tema")==="auto") gantiTema("auto"); });
+</script>
+</body>
+</html>

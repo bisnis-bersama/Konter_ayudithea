@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nota Tagihan LCD Deris - Konter A Yudi Thea</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Poppins',sans-serif}
+body{background:#eef0ff;color:#1e293b;min-height:100vh}
+.header{background:linear-gradient(135deg,#0b63f0 0%, #1976ff 100%);color:white;padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20;box-shadow:0 4px 16px rgba(11,99,240,.25)}
+.header.btn{width:36px;height:36px;background:rgba(255,255,255,.18);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:0;color:white;font-size:16px}
+.header.btn:hover{background:rgba(255,255,255,.3)}
+.header.title{flex:1;text-align:center}
+.header.title b{font-family:'Poppins';font-size:14px;font-weight:800;display:block;line-height:1.1}
+.header.title small{font-size:10px;opacity:.9;font-weight:500}
+.container{padding:12px;max-width:1000px;margin:0 auto}
+.card{background:white;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.06);border:1px solid #e8eaff;overflow:hidden;margin-bottom:14px}
+.card-head{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f1f5f9}
+.card-head h3{font-family:'Poppins';font-size:13px;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:8px}
+.badge{font-size:10px;padding:5px 10px;border-radius:20px;font-weight:800}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.table-wrap{overflow:auto;max-height:75vh}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:700px}
+th{background:linear-gradient(135deg,#0b63f0,#3b82f6);color:white;padding:10px 10px;text-align:left;font-family:'Poppins';font-size:11px;font-weight:700;position:sticky;top:0;z-index:2;white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+tr:hover td{background:#f8faff}
+tr.total td{background:linear-gradient(135deg,#fef08a,#fde047);color:#854d0e;font-weight:800;font-family:'Poppins';border-bottom:0}
+tr.lunas td{background:#f0fdf4}
+.num{text-align:right;font-weight:700;font-family:'Inter'}
+.empty{text-align:center;padding:30px;color:#94a3b8}
+.footer{text-align:center;padding:14px;color:#94a3b8;font-size:10px}
+.loading{text-align:center;padding:20px;color:#64748b;font-size:12px}
+.error-box{background:#fee2e2;color:#991b1b;padding:12px;margin:10px;border-radius:8px;font-size:11px}
+.print-btn{background:#0b63f0;color:white;padding:10px 16px;border-radius:10px;font-weight:800;font-size:12px;border:0;cursor:pointer;display:flex;align-items:center;gap:6px}
+.print-btn:hover{background:#0952cc}
+.pill{display:inline-block;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:800}
+.pill-green{background:#dcfce7;color:#166534}
+.rekening-box{background:linear-gradient(135deg,#1e3a8a,#1e40af);color:white;padding:16px;margin:12px;border-radius:14px;box-shadow:0 6px 16px rgba(30,64,175,.3)}
+.rekening-box h4{font-family:'Poppins';font-size:13px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.rekening-row{display:flex;justify-content:space-between;align-items:center;margin:8px 0;font-size:12px}
+.rekening-row.label{opacity:.9;font-weight:600}
+.rekening-row.value{font-weight:800;font-family:'Poppins';font-size:13px}
+.copy-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:white;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;margin-left:8px}
+.copy-btn:hover{background:rgba(255,255,255,.3)}
+.wa-btn{background:#25d366;color:white;padding:10px 16px;border-radius:10px;font-weight:800;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-top:10px;width:100%;justify-content:center}
+.wa-btn:hover{background:#20ba5a}
+@media print{
+.header,.print-btn,.footer{display:none}
+.card{box-shadow:none;border:0}
+ body{background:white}
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <button class="btn" onclick="window.location.href='index.html'" title="Kembali">←</button>
+  <div class="title">
+    <b>🏪 NOTA LCD DERIS</b>
+    <small>Data Uangkas Penjualan - Semua Baris</small>
+  </div>
+  <button class="btn" onclick="window.print()" title="Cetak">🖨️</button>
+</div>
+
+<div class="container">
+<div class="card">
+  <div class="card-head">
+    <h3>📱 DATA UANGKAS PENJUALAN LCD DERIS</h3>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="badge badge-blue" id="count-data">0 Data</span>
+      <button class="print-btn" onclick="window.print()">🖨️ Cetak Nota</button>
+    </div>
+  </div>
+  <div id="error-data"></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>TGL</th>
+          <th style="text-align:right">UANG KAS DPD</th>
+          <th style="text-align:right">TAGIHAN</th>
+          <th>KETERANGAN</th>
+          <th style="text-align:center">QTY</th>
+          <th style="text-align:right">TABUNGAN</th>
+        </tr>
+      </thead>
+      <tbody id="data-deris">
+        <tr><td colspan="6" class="loading">Loading data...</td></tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="rekening-box">
+    <h4>💳 Info Pembayaran</h4>
+    <div class="rekening-row">
+      <span class="label">Bank</span>
+      <span class="value">BCA</span>
+    </div>
+    <div class="rekening-row">
+      <span class="label">No. Rekening</span>
+      <span class="value">
+        4182005758
+        <button class="copy-btn" onclick="copyRek()">Salin</button>
+      </span>
+    </div>
+    <div class="rekening-row">
+      <span class="label">Atas Nama</span>
+      <span class="value">Arief Deris Firmnasyah</span>
+    </div>
+    <a href="https://wa.me/628388811600?text=Halo%20Kang%20Yudi,%20saya%20sudah%20transfer%20tagihan.%20Berikut%20bukti%20transfernya:" target="_blank" class="wa-btn">
+      📱 Konfirmasi via WhatsApp
+    </a>
+    <div style="font-size:10px;opacity:.8;margin-top:8px;text-align:center">Kirim bukti transfer ke 08388811600</div>
+  </div>
+</div>
+<div class="footer">© 2026 Konter A Yudi Thea • Data LCD Deris • <span id="last-update">-</span></div>
+</div>
+
+<script>
+const URL_DERIS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSPUo91axAGRXPcJOs-gTwEbciNhVtwk_TA5XacKCW8MV3Czytd4QEJVDgbsUGYpDE3tYGMmCCtucUA/pub?gid=1001890303&single=true&output=csv';
+
+function copyRek() {
+  navigator.clipboard.writeText('4182005758');
+  const btn = event.target;
+  const old = btn.textContent;
+  btn.textContent = '✓ Tersalin';
+  setTimeout(() => btn.textContent = old, 2000);
+}
+
+function parseCSV(text) {
+  const rows = [];
+  let currentRow = [];
+  let currentCell = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const nextChar = text[i + 1];
+    
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        currentCell += '"';
+        i++;
+      } else {
+        inQuotes =!inQuotes;
+      }
+    } else if (char === ',' &&!inQuotes) {
+      currentRow.push(currentCell.trim());
+      currentCell = '';
+    } else if (char === '\n' &&!inQuotes) {
+      currentRow.push(currentCell.trim());
+      if (currentRow.some(cell => cell!== '')) rows.push(currentRow);
+      currentRow = [];
+      currentCell = '';
+    } else {
+      currentCell += char;
+    }
+  }
+  
+  if (currentCell || currentRow.length > 0) {
+    currentRow.push(currentCell.trim());
+    if (currentRow.some(cell => cell!== '')) rows.push(currentRow);
+  }
+  
+  return rows;
+}
+
+async function loadDeris() {
+  try {
+    const res = await fetch(URL_DERIS);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    
+    const text = await res.text();
+    if(text.includes('<!DOCTYPE html>')) throw new Error('Sheet belum di-publish ke CSV');
+    
+    const rows = parseCSV(text);
+    
+    // BUANG BARIS 1 & 2, AMBIL SEMUA SISANYA
+    rows.splice(0, 2);
+
+    let html = '';
+    let count = 0;
+
+    rows.forEach(row => {
+      const tgl = row[0] || '';
+      const kas = row[1] || '';
+      const tagihan = row[2] || '';
+      const ket = row[3] || '';
+      const qty = row[4] || '';
+      const tabungan = row[5] || '';
+
+      if(tgl) {
+        count++;
+        const isTotal = tgl.toLowerCase().includes('total');
+        const isLunas = ket.toLowerCase().includes('lunas');
+        const ketHtml = isLunas? `<span class="pill pill-green">${ket}</span>` : ket;
+        const tabunganHtml = tabungan.includes('-')? `<span style="color:#dc2626">${tabungan}</span>` : tabungan;
+        
+        html += `<tr class="${isTotal? 'total' : ''} ${isLunas? 'lunas' : ''}">
+          <td style="white-space:nowrap">${tgl}</td>
+          <td class="num">${kas}</td>
+          <td class="num">${tagihan}</td>
+          <td>${ketHtml}</td>
+          <td style="text-align:center">${qty}</td>
+          <td class="num">${tabunganHtml}</td>
+        </tr>`;
+      }
+    });
+
+    document.getElementById('data-deris').innerHTML = html || '<tr><td colspan="6" class="empty">Data kosong</td></tr>';
+    document.getElementById('count-data').textContent = count + ' Data';
+    document.getElementById('error-data').innerHTML = '';
+  } catch(e) {
+    console.error('Error loadDeris:', e);
+    document.getElementById('data-deris').innerHTML = '<tr><td colspan="6" class="empty">Gagal load data</td></tr>';
+    document.getElementById('error-data').innerHTML = `<div class="error-box">Error: ${e.message}<br>Pastikan Sheet sudah di-publish ke web sebagai CSV</div>`;
+  }
+}
+
+function updateTime() {
+  const now = new Date();
+  document.getElementById('last-update').textContent = 'Update: ' + now.toLocaleTimeString('id-ID');
+}
+
+loadDeris();
+updateTime();
+setInterval(() => { loadDeris(); updateTime(); }, 120000);
+</script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Konter A Yudi Thea</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{background:#eaf3ff;color:#0b1a33;transition:.3s;overflow-x:hidden}
+header{background:linear-gradient(135deg,#005bea,#008cff);color:#fff;padding:16px 20px 16px 60px;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.3);position:sticky;top:0;z-index:10}
+header h1{font-size:20px;letter-spacing:.5px}
+header p{opacity:.9;font-size:12px;margin-top:3px}
+.container{max-width:1150px;margin:auto;padding:16px}
+.card{background:#fff;border-radius:18px;padding:18px;margin-bottom:18px;box-shadow:0 8px 18px rgba(0,0,0,.12)}
+.card-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.card-head h2{color:#0066cc;font-size:18px;display:flex;align-items:center;gap:8px}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filter-row input[type=date]{padding:10px 12px;border-radius:12px;border:2px solid #dbeafe;background:#f8fbff;outline:none;font-weight:600}
+.btn-chip{padding:8px 12px;border-radius:20px;border:1px solid #dbeafe;background:#eef2ff;color:#0b6ef3;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn-chip.active,.btn-chip:hover{background:#0b6ef3;color:#fff;border-color:#0b6ef3}
+
+/* HAMBURGER BUTTON */
+#hamburgerBtn{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:12px;border:2px solid rgba(255,255,255,.8);background:rgba(255,255,255,.15);color:#fff;font-size:20px;cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(4px)}
+#hamburgerBtn:hover{background:#fff;color:#005bea}
+
+/* OVERLAY */
+#hamburgerOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99;opacity:0;pointer-events:none;transition:.3s}
+#hamburgerOverlay.open{opacity:1;pointer-events:auto}
+
+/* SIDE MENU */
+#hamburgerMenu{position:fixed;left:0;top:0;height:100vh;width:320px;max-width:85vw;background:#fff;z-index:100;transform:translateX(-100%);transition:.35s cubic-bezier(.4,0,.2,1);box-shadow:8px 0 30px rgba(0,0,0,.2);display:flex;flex-direction:column;overflow:hidden}
+#hamburgerMenu.open{transform:translateX(0)}
+.ham-header{background:linear-gradient(135deg,#005bea,#008cff);color:#fff;padding:18px 16px;display:flex;justify-content:space-between;align-items:center}
+.ham-header h3{font-size:16px}
+.ham-header button{width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.15);color:#fff;cursor:pointer}
+.ham-content{flex:1;overflow-y:auto;padding:12px}
+.ham-section{margin-bottom:18px}
+.ham-label{font-size:10px;letter-spacing:.8px;font-weight:800;opacity:.5;margin:12px 8px 8px;text-transform:uppercase}
+.ham-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;text-decoration:none;color:#0b1a33;font-weight:600;font-size:14px;border:1px solid #eef2ff;margin-bottom:8px;transition:.2s;background:#fff}
+.ham-item:hover{border-color:#0b6ef3;background:#eef6ff;transform:translateX(3px)}
+.ham-item .ham-icon{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.ham-apk{background:linear-gradient(135deg,#005bea,#00b050)!important;color:#fff!important;border-color:transparent!important;font-weight:800}
+.ham-apk:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,91,234,.3)}
+.ham-select{width:100%;padding:10px 12px;border-radius:10px;border:2px solid #dbeafe;background:#f8fbff;font-weight:700;color:#0b1a33}
+
+/* FORM */
+#cardForm{border:2px solid #0b6ef3;overflow:hidden}
+.form-wrapper{border-radius:12px;overflow:hidden;border:2px solid #dbeafe;background:#fff;transition:.3s}
+.form-wrapper.collapsed{height:0;border:0;overflow:hidden;opacity:0}
+.form-iframe{width:100%;height:820px;border:0;display:block;background:#fff}
+
+/* STATS */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.stat{background:#fff;border:1px solid #e6eefc;border-radius:16px;padding:16px;position:relative;overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:4px}
+.stat::after{content:'';position:absolute;right:-15px;top:-15px;width:70px;height:70px;border-radius:50%;opacity:.10}
+.stat.total::after{background:#005bea}
+.stat.luar::after{background:#00b050}
+.stat.all::after{background:#7c3aed}
+.stat.out::after{background:#ff3b30}
+.stat.cash::after{background:#f59e0b}
+.stat.trx::after{background:#06b6d4}
+.stat-label{font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:.6px;font-weight:700}
+.stat-nilai{font-size:22px;font-weight:800}
+.stat.total .stat-nilai{color:#005bea}
+.stat.luar .stat-nilai{color:#00b050}
+.stat.all .stat-nilai{color:#7c3aed}
+.stat.out .stat-nilai{color:#ff3b30}
+.stat-sub{font-size:11px;opacity:.6}
+
+footer{text-align:center;padding:18px;color:#6b7a99;font-size:12px}
+
+/* DARK */
+body.dark{background:#121212;color:#e9e9e9}
+body.dark header{background:linear-gradient(#1e1e1e,#111)}
+body.dark #hamburgerMenu{background:#1e1e1e}
+body.dark .ham-item{background:#2a2a2a;border-color:#333;color:#fff}
+body.dark .ham-item:hover{background:#333;border-color:#0b6ef3}
+body.dark .ham-select{background:#2a2a2a;border-color:#444;color:#fff}
+body.dark .card,body.dark .stat{background:#1e1e1e;border-color:#333;box-shadow:none}
+body.dark .card-head h2{color:#6cb8ff}
+body.dark .stat-label{color:#aaa}
+body.dark .stat-nilai{color:#fff !important}
+body.dark .filter-row input{background:#2a2a2a;border-color:#444;color:#fff}
+body.dark .btn-chip{background:#2a2a2a;border-color:#444;color:#aaa}
+body.dark .btn-chip.active{background:#0b6ef3;color:#fff;border-color:#0b6ef3}
+body.dark .form-wrapper{border-color:#333}
+body.dark footer{color:#888}
+
+/* responsive */
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.form-iframe{height:700px}}
+@media(max-width:600px){
+header{padding:14px 12px 14px 56px}
+header h1{font-size:18px}
+.container{padding:10px}
+.grid{grid-template-columns:1fr 1fr}
+.stat-nilai{font-size:18px}
+.filter-row{width:100%}
+.filter-row input{flex:1}
+.form-iframe{height:650px}
+}
+</style>
+</head>
+<body>
+
+<header>
+<button id="hamburgerBtn" onclick="toggleHamburger()">☰</button>
+<h1>🏪 KONTER A YUDI THEA</h1>
+<p>Dashboard Internal Pemilik & Karyawan</p>
+</header>
+
+<div id="hamburgerOverlay" onclick="closeHamburger()"></div>
+
+<nav id="hamburgerMenu">
+<div class="ham-header">
+<h3>🏪 MENU UTAMA</h3>
+<button onclick="closeHamburger()">✕</button>
+</div>
+<div class="ham-content">
+
+<div class="ham-section">
+<a class="ham-item" href="#" onclick="refreshPage();return false;">
+<div class="ham-icon" style="background:#d4f8d4">🔄</div>
+<div>
+<b>REFRESH HALAMAN</b>
+<span style="display:block;font-size:11px;opacity:.6">Muat ulang halaman</span>
+</div>
+</a>
+
+
+<div class="ham-label">AKSI CEPAT</div>
+<a href="https://drive.google.com/file/d/1GmutmEnn68z-x01s8VMK0Bw6lI8orzzB/view?usp=drivesdk" target="_blank" class="ham-item ham-apk">
+<div class="ham-icon" style="background:rgba(255,255,255,.2)">📲</div>
+<div><b>APK INSTAL</b><span style="display:block;font-size:10px;opacity:.8">Download dari Drive</span></div>
+</a>
+<div class="ham-item" style="justify-content:space-between">
+<span style="display:flex;align-items:center;gap:8px"><span class="ham-icon" style="background:#e8f0ff">🎨</span> Tema</span>
+<select id="themeSelect" onchange="gantiTema(this.value)" class="ham-select" style="width:110px">
+<option value="auto">📱 Auto</option>
+<option value="light">☀️ Light</option>
+<option value="dark">🌙 Dark</option>
+</select>
+</div>
+</div>
+
+<div class="ham-section">
+<div class="ham-label">MENU DASHBOARD</div>
+<a class="ham-item" href="pendapatan.html" onclick="closeHamburger()">
+<div class="ham-icon" style="background:#e8f0ff">💰</div><div><b>Pendapatan</b><span style="display:block;font-size:11px;opacity:.6">Harian, bulanan, tahunan</span></div>
+</a>
+
+<a class="ham-item" href="stock.html" onclick="closeHamburger()">
+<div class="ham-icon" style="background:#e6fbe9">📦</div><div><b>Data Stok Barang</b><span style="display:block;font-size:11px;opacity:.6">Cek sisa & nilai stok</span></div>
+</a>
+
+<a class="ham-item" href="persamaan-lcd.html" onclick="closeHamburger()">
+<div class="ham-icon" style="background:#e0f7ff">🔍</div><div><b>Persamaan LCD</b><span style="display:block;font-size:11px;opacity:.6">Filter LCD ZEVAN • Cek compatible</span></div>
+</a>
+  
+<a class="ham-item" href="deris.html" onclick="closeHamburger()">
+<div class="ham-icon" style="background:#fff4e6">📋</div><div><b>Nota ke distributor</b><span style="display:block;font-size:11px;opacity:.6">nota ke distributor lcd & batterai</span></div>
+</a>
+  
+<a class="ham-item" href="nota.html" onclick="closeHamburger()">
+<div class="ham-icon" style="background:#f3e8ff">📈</div><div><b>Buat konfirmasi & nota</b><span style="display:block;font-size:11px;opacity:.6">Nota servis & blanja</span></div>
+</a>
+
+<a class="ham-item" href="tagihan.html" onclick="closeHamburger()">
+<div class="ham-icon" style="background:#ffe8e8">👥</div><div><b>DATA TAGIHAN</b><span style="display:block;font-size:11px;opacity:.6">Rincian belanja & tagihan</span></div>
+</a>
+
+<a class="ham-item" href="kerja.html" onclick="closeHamburger()">
+<div class="ham-icon" style="background:#fff4e6">📋</div><div><b>Ketetapan Kerja</b><span style="display:block;font-size:11px;opacity:.6">Aturan & SOP karyawan</span></div>
+</a>
+  
+<a class="ham-item" href="upahkerja.html" onclick="closeHamburger()">
+<div class="ham-icon" style="background:#e8f7ff">📝</div><div><b>UPAH KERJA</b><span style="display:block;font-size:11px;opacity:.6">Upah & Casbon</span></div>
+</a>
+
+<a class="ham-item" href="sopservice.html" onclick="closeHamburger()">
+<div class="ham-icon" style="background:#e6f9f5">👨‍🔧</div><div><b>SOP Service</b><span style="display:block;font-size:11px;opacity:.6">Panduan service HP</span></div>
+</a>
+
+<a class="ham-item" href="catatan.html" onclick="closeHamburger()">
+<div class="ham-icon" style="background:#e8f7ff">📝</div><div><b>Catatan</b><span style="display:block;font-size:11px;opacity:.6">Alur pendapatan konter</span></div>
+</a>
+
+<a class="ham-item" href="#kontak" onclick="closeHamburger()">
+<div class="ham-icon" style="background:#e8ffe8">☎</div><div><b>Kontak Penting</b><span style="display:block;font-size:11px;opacity:.6">Pemilik, karyawan, supplier</span></div>
+</a>
+</div>
+
+<div class="ham-section">
+<div class="ham-label">INFO</div>
+<div style="font-size:11px;opacity:.5;padding:8px">© 2026 Konter A Yudi Thea v2.0</div>
+</div>
+
+</div>
+</nav>
+
+<div class="container">
+
+<!-- FORM TETAP PALING ATAS -->
+<div class="card" id="cardForm">
+<div class="card-head">
+<h2>📝 Input Data Form</h2>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn-chip" onclick="toggleForm()" id="btnToggleForm">Sembunyikan</button>
+<a href="https://forms.gle/Y3tdTVLxbETdXfHK6" target="_blank" class="btn-chip active">Buka Form ↗</a>
+</div>
+</div>
+<div class="form-wrapper" id="formWrapper">
+<iframe class="form-iframe" src="https://forms.gle/Y3tdTVLxbETdXfHK6" frameborder="0" marginheight="0" marginwidth="0">Memuat…</iframe>
+</div>
+<p style="font-size:11px;opacity:.6;margin-top:10px;text-align:center">Form otomatis masuk ke Spreadsheet. Jika tidak muncul, klik Buka Form.</p>
+</div>
+
+<!-- RINGKASAN - TETAP DILUAR -->
+<div class="card">
+<div class="card-head">
+<h2>📅 Ringkasan Keuangan</h2>
+<div class="filter-row">
+<input type="date" id="tanggalFilter">
+<button class="btn-chip active" onclick="quickDate('today')">Hari Ini</button>
+<button class="btn-chip" onclick="quickDate('yesterday')">Kemarin</button>
+<button class="btn-chip" onclick="quickDate('month')">Bulan Ini</button>
+</div>
+</div>
+<div class="grid">
+<div class="stat total"><div class="stat-label">Pendapatan Konter</div><div class="stat-nilai" id="pendapatan">Rp0</div><div class="stat-sub" id="subPend">0 transaksi</div></div>
+<div class="stat luar"><div class="stat-label">Penghasilan Luar</div><div class="stat-nilai" id="pendLuar">Rp0</div><div class="stat-sub" id="subLuar">0 transaksi luar</div></div>
+<div class="stat all"><div class="stat-label">Total Pendapatan</div><div class="stat-nilai" id="totalPend">Rp0</div><div class="stat-sub">Konter + Luar</div></div>
+<div class="stat out"><div class="stat-label">Pengeluaran</div><div class="stat-nilai" id="pengeluaran">Rp0</div><div class="stat-sub">hari ini</div></div>
+<div class="stat cash"><div class="stat-label">Sisa Kas Bersih</div><div class="stat-nilai" id="sisa">Rp0</div><div class="stat-sub" id="subSisa">Total - Pengeluaran</div></div>
+<div class="stat trx"><div class="stat-label">Barang & Transaksi</div><div class="stat-nilai" id="transaksi">0 trx</div><div class="stat-sub" id="barang">0 pcs terjual</div></div>
+</div>
+</div>
+
+<!-- KONTAK - TETAP DILUAR -->
+<div class="card" id="kontak" style="border:1.5px solid #0b6ef3">
+<div class="card-head">
+<h2>☎️ Kontak Penting</h2>
+<span style="font-size:11px;background:#eef2ff;color:#0b6ef3;padding:6px 10px;border-radius:20px;font-weight:700">Klik untuk Telpon / WA</span>
+</div>
+<div class="grid" style="grid-template-columns:repeat(2,1fr)">
+<div class="stat" style="border-left:4px solid #005bea">
+<div style="display:flex;justify-content:space-between;align-items:center"><div><div class="stat-label" style="color:#005bea">PEMILIK</div><div style="font-size:16px;font-weight:800;margin:4px 0">Yudi</div><div style="font-size:13px;font-weight:600;opacity:.8">0823-1926-4646</div></div><div style="width:36px;height:36px;border-radius:9px;background:#e8f0ff;display:grid;place-items:center">👑</div></div>
+<div style="display:flex;gap:8px;margin-top:12px"><a href="tel:+6282319264646" class="btn-chip active" style="flex:1">📞 Telpon</a><a href="https://wa.me/6282319264646" target="_blank" class="btn-chip" style="flex:1;background:#25D366;color:#fff;border-color:#25D366">💬 WA</a></div>
+</div>
+<div class="stat" style="border-left:4px solid #00b050">
+<div style="display:flex;justify-content:space-between;align-items:center"><div><div class="stat-label" style="color:#00b050">KARYAWAN 1</div><div style="font-size:16px;font-weight:800;margin:4px 0">Farhan</div><div style="font-size:13px;font-weight:600;opacity:.8">0813-1563-963</div></div><div style="width:36px;height:36px;border-radius:9px;background:#e6fbe9;display:grid;place-items:center">👨‍💼</div></div>
+<div style="display:flex;gap:8px;margin-top:12px"><a href="tel:+628131563963" class="btn-chip active" style="flex:1">📞 Telpon</a><a href="https://wa.me/628131563963" target="_blank" class="btn-chip" style="flex:1;background:#25D366;color:#fff;border-color:#25D366">💬 WA</a></div>
+</div>
+<div class="stat" style="border-left:4px solid #7c3aed">
+<div style="display:flex;justify-content:space-between;align-items:center"><div><div class="stat-label" style="color:#7c3aed">KARYAWAN 2</div><div style="font-size:16px;font-weight:800;margin:4px 0">Zaka</div><div style="font-size:13px;font-weight:600;opacity:.8">0831-8663-6396</div></div><div style="width:36px;height:36px;border-radius:9px;background:#f3e8ff;display:grid;place-items:center">🧑‍🔧</div></div>
+<div style="display:flex;gap:8px;margin-top:12px"><a href="tel:+6283186636396" class="btn-chip active" style="flex:1">📞 Telpon</a><a href="https://wa.me/6283186636396" target="_blank" class="btn-chip" style="flex:1;background:#25D366;color:#fff;border-color:#25D366">💬 WA</a></div>
+</div>
+<div class="stat" style="border-left:4px solid #f59e0b">
+<div style="display:flex;justify-content:space-between;align-items:center"><div><div class="stat-label" style="color:#f59e0b">GRAB / OJEK</div><div style="font-size:16px;font-weight:800;margin:4px 0">Jhilun</div><div style="font-size:13px;font-weight:600;opacity:.8">0821-1970-1272</div></div><div style="width:36px;height:36px;border-radius:9px;background:#fff4e6;display:grid;place-items:center">🛵</div></div>
+<div style="display:flex;gap:8px;margin-top:12px"><a href="tel:+6282119701272" class="btn-chip active" style="flex:1">📞 Telpon</a><a href="https://wa.me/6282119701272" target="_blank" class="btn-chip" style="flex:1;background:#25D366;color:#fff;border-color:#25D366">💬 WA</a></div>
+</div>
+<div class="stat" style="border-left:4px solid #ff3b30;grid-column:1 / -1">
+<div style="display:flex;justify-content:space-between;align-items:center"><div><div class="stat-label" style="color:#ff3b30">SUPPLIER LCD - KADIPATEN</div><div style="font-size:18px;font-weight:800;margin:4px 0">A Deris</div><div style="font-size:14px;font-weight:700">0823-2001-5758</div><div style="font-size:11px;opacity:.6">Sparepart LCD & Service</div></div><div style="width:42px;height:42px;border-radius:10px;background:#ffe8e8;display:grid;place-items:center;font-size:22px">📱</div></div>
+<div style="display:flex;gap:8px;margin-top:12px"><a href="tel:+6282320015758" class="btn-chip active" style="flex:1">📞 Telpon</a><a href="https://wa.me/6282320015758" target="_blank" class="btn-chip" style="flex:1;background:#25D366;color:#fff;border-color:#25D366">💬 WA Supplier</a></div>
+</div>
+</div>
+</div>
+
+</div>
+
+<footer>© 2026 Konter A Yudi Thea • v2.0 Dashboard</footer>
+
+<script>
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTAP_R50frV13whqx54ctjplc-8xhcN53rHEVk5mkhLeZE283xWnr6TdTBFr-KFymEiaYE_NWgGthpo/pub?gid=1848020631&single=true&output=csv";
+const LUAR_CSV_URL="";
+let data=[], dataLuar=[];
+function formatRp(n){return "Rp "+Number(n||0).toLocaleString('id-ID')}
+
+function toggleHamburger(){
+ document.getElementById('hamburgerMenu').classList.toggle('open');
+ document.getElementById('hamburgerOverlay').classList.toggle('open');
+}
+function closeHamburger(){
+ document.getElementById('hamburgerMenu').classList.remove('open');
+ document.getElementById('hamburgerOverlay').classList.remove('open');
+}
+
+function toggleForm(){
+  const wrap=document.getElementById('formWrapper');
+  const btn=document.getElementById('btnToggleForm');
+  if(wrap.classList.contains('collapsed')){wrap.classList.remove('collapsed');btn.textContent='Sembunyikan';}
+  else{wrap.classList.add('collapsed');btn.textContent='Tampilkan Form';}
+}
+function parseCSV(text){
+  const out=[]; let row=[], cur="", inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i], n=text[i+1];
+    if(c==='"'){ if(inQ && n==='"'){cur+='"'; i++;} else inQ=!inQ; }
+    else if(c===',' && !inQ){ row.push(cur); cur=""; }
+    else if((c==='\n'||c==='\r') && !inQ){ if(cur!==""||row.length){row.push(cur); out.push(row); row=[]; cur="";} if(c==='\r'&&n==='\n') i++; }
+    else cur+=c;
+  }
+  if(cur!==""||row.length){row.push(cur); out.push(row);}
+  return out;
+}
+async function load(){
+  const t = await fetch(CSV_URL).then(r=>r.text());
+  const parsed = parseCSV(t);
+  data=[];
+  for(let i=1;i<parsed.length;i++){
+    const c=parsed[i];
+    if(!c || c.length<12) continue;
+    const tgl=(c[0]||"").trim();
+    if(!tgl.includes("/")) continue;
+    data.push({tanggal:tgl,jumlah:parseFloat((c[10]||"0").replace(/[^0-9.-]/g,""))||0,total:parseFloat((c[11]||"0").replace(/[^0-9.-]/g,""))||0,pengeluaran:parseFloat((c[12]||"0").replace(/[^0-9.-]/g,""))||0});
+  }
+  dataLuar = JSON.parse(localStorage.getItem("penghasilanLuar")||"[]");
+  const d=new Date();
+  document.getElementById("tanggalFilter").value=d.toISOString().slice(0,10);
+  hitung();
+}
+function quickDate(type){
+  document.querySelectorAll('.filter-row .btn-chip').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  const inp=document.getElementById("tanggalFilter");
+  const now=new Date();
+  if(type==='today'){ inp.value=now.toISOString().slice(0,10); }
+  else if(type==='yesterday'){ const y=new Date(now); y.setDate(y.getDate()-1); inp.value=y.toISOString().slice(0,10); }
+  else if(type==='month'){ hitungBulanIni(); return; }
+  hitung();
+}
+function hitungBulanIni(){
+  const now=new Date(); const m=String(now.getMonth()+1).padStart(2,'0'); const y=now.getFullYear();
+  let pend=0,peng=0,trans=0,barang=0, luar=0, luarTrx=0;
+  data.forEach(x=>{ const p=x.tanggal.split("/"); if(p[1]===m && p[2]===String(y)){ pend+=x.total; peng+=x.pengeluaran; barang+=x.jumlah; trans++; } });
+  dataLuar.forEach(x=>{ const p=x.tanggal.split("/"); if(p[1]===m && p[2]===String(y)){ luar+=x.total; luarTrx++; } });
+  render(pend,peng,trans,barang,luar,luarTrx, `Bulan ${m}-${y}`);
+}
+function hitung(){
+  const v=document.getElementById("tanggalFilter").value; if(!v) return;
+  const p=v.split("-"); const cari=p[2]+"/"+p[1]+"/"+p[0];
+  let pend=0,peng=0,trans=0,barang=0, luar=0, luarTrx=0;
+  data.forEach(x=>{ if(x.tanggal===cari){ pend+=x.total; peng+=x.pengeluaran; barang+=x.jumlah; trans++; } });
+  dataLuar.forEach(x=>{ if(x.tanggal===cari){ luar+=x.total; luarTrx++; } });
+  render(pend,peng,trans,barang,luar,luarTrx, cari);
+}
+function render(pend,peng,trans,barang,luar,luarTrx, label){
+  const total = pend+luar; const sisa = total-peng;
+  document.getElementById("pendapatan").textContent=formatRp(pend);
+  document.getElementById("pendLuar").textContent=formatRp(luar);
+  document.getElementById("totalPend").textContent=formatRp(total);
+  document.getElementById("pengeluaran").textContent=formatRp(peng);
+  document.getElementById("sisa").textContent=formatRp(sisa);
+  document.getElementById("transaksi").textContent=trans+" trx";
+  document.getElementById("barang").textContent=barang+" pcs";
+  document.getElementById("subPend").textContent=trans+" transaksi konter";
+  document.getElementById("subLuar").textContent=luarTrx+" transaksi luar • "+label;
+  document.getElementById("subSisa").textContent=label+" • Total - Pengeluaran";
+}
+document.getElementById("tanggalFilter").addEventListener("change",()=>{document.querySelectorAll('.filter-row .btn-chip').forEach(b=>b.classList.remove('active')); hitung();});
+
+const media = window.matchMedia("(prefers-color-scheme: dark)");
+function gantiTema(mode){
+  localStorage.setItem("tema",mode);
+  if(mode==="dark") document.body.classList.add("dark");
+  else if(mode==="light") document.body.classList.remove("dark");
+  else document.body.classList.toggle("dark",media.matches);
+  document.getElementById("themeSelect").value=mode;
+}
+const simpan = localStorage.getItem("tema") || "auto";
+document.getElementById("themeSelect").value=simpan; gantiTema(simpan);
+media.addEventListener("change",()=>{ if(localStorage.getItem("tema")==="auto") gantiTema("auto"); });
+load();
+function refreshPage(){
+
+    closeHamburger();
+
+    setTimeout(() => {
+        location.reload();
+    }, 200);
+
+}
+</script>
+</body>
+</html>

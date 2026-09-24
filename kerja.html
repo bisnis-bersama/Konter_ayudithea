@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SOP Karyawan - Konter A Yudi Thea</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{background:#eaf3ff;color:#0b1a33;transition:.3s;line-height:1.6}
+header{background:linear-gradient(135deg,#005bea,#008cff);color:#fff;text-align:center;padding:18px 20px;box-shadow:0 6px 20px rgba(0,0,0,.3);position:sticky;top:0;z-index:10}
+header h1{font-size:22px}
+header p{opacity:.9;font-size:13px;margin-top:4px}
+.theme-box{position:absolute;right:15px;top:14px}
+#themeSelect{padding:6px 12px;border-radius:20px;border:2px solid #fff;background:#fff;color:#005bea;font-weight:700;font-size:12px;cursor:pointer}
+.container{max-width:1000px;margin:auto;padding:16px}
+.back{display:inline-flex;align-items:center;gap:6px;margin:10px 0 16px;text-decoration:none;color:#fff;background:linear-gradient(#29a7ff,#0066cc);padding:10px 18px;border-radius:12px;font-weight:bold;box-shadow:0 4px 0 #003d80;transition:.15s}
+.back:active{transform:translateY(3px);box-shadow:0 1px 0 #003d80}
+.card{background:#fff;border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 8px 18px rgba(0,0,0,.12);border:1px solid #e6eefc}
+.card.intro{background:linear-gradient(135deg,#005bea,#00c6ff);color:#fff;border:none}
+.card.intro h2{color:#fff}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3)}
+h2{color:#0066cc;font-size:18px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+h3{font-size:15px;margin:14px 0 8px;color:#0b1a33}
+ul{padding-left:18px}
+li{margin-bottom:8px;font-size:14px}
+.search-box{position:relative;margin:12px 0}
+.search-box input{width:100%;padding:12px 14px 12px 40px;border-radius:12px;border:2px solid #dbeafe;background:#f8fbff;outline:none}
+.search-box input:focus{border-color:#0b6ef3;box-shadow:0 0 0 4px rgba(11,110,243,.15)}
+.search-box span{position:absolute;left:12px;top:50%;transform:translateY(-50%)}
+.toc{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.toc a{text-decoration:none;font-size:12px;background:#f1f5ff;padding:8px 10px;border-radius:10px;color:#0b6ef3;font-weight:600;border:1px solid #dbeafe}
+.toc a:hover{background:#0b6ef3;color:#fff}
+
+/* SOP ACCORDION */
+.sop{border:1px solid #e6eefc;border-radius:14px;margin-bottom:12px;overflow:hidden;background:#fff;transition:.2s}
+.sop.open{border-color:#0b6ef3;box-shadow:0 6px 16px rgba(11,110,243,.12)}
+.sop-head{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:linear-gradient(#fff,#f8fbff);user-select:none}
+.sop-head b{font-size:14px;display:flex;align-items:center;gap:10px}
+.sop-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px;flex-shrink:0}
+.sop-body{display:none;padding:0 16px 16px 16px}
+.sop.open .sop-body{display:block}
+.sop-arrow{transition:.2s}
+.sop.open .sop-arrow{transform:rotate(90deg)}
+.tag{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:700}
+.tag-wajib{background:#e6fbe9;color:#00b050;border:1px solid #a6e9b1}
+.tag-penting{background:#fff4e6;color:#f59e0b;border:1px solid #ffd699}
+.tag-larang{background:#ffe9e9;color:#ff3b30;border:1px solid #ffb3b3}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.info{padding:10px 12px;border-radius:10px;font-size:13px;margin:8px 0}
+.info.blue{background:#eef4ff;border:1px solid #c7d8ff;color:#0b3d91}
+.info.yellow{background:#fff8e6;border:1px solid #ffe7a3;color:#7a5a00}
+.info.red{background:#fff0f0;border:1px solid #ffc2c2;color:#7a0000}
+.kbd{display:inline-block;padding:2px 6px;border-radius:6px;background:#eef2ff;border:1px solid #c7d8ff;font-size:11px;font-family:monospace}
+footer{text-align:center;padding:20px;color:#6b7a99;font-size:12px}
+
+/* DARK */
+body.dark{background:#121212;color:#e9e9e9}
+body.dark header{background:linear-gradient(#1e1e1e,#111)}
+body.dark .card,body.dark .sop{background:#1e1e1e;border-color:#333;box-shadow:none}
+body.dark .sop-head{background:#242424}
+body.dark h2{color:#6cb8ff}
+body.dark h3{color:#fff}
+body.dark .search-box input{background:#2a2a2a;border-color:#444;color:#fff}
+body.dark .toc a{background:#2a2a2a;border-color:#444;color:#8ab4ff}
+body.dark .info.blue{background:#1e2a4a;border-color:#2d4a8a;color:#a8c6ff}
+body.dark .info.yellow{background:#3a2e12;border-color:#6a5a2a;color:#ffde8a}
+body.dark .info.red{background:#3a1a1a;border-color:#6a2a2a;color:#ff8a8a}
+body.dark .back{background:#333;box-shadow:0 4px 0 #111}
+body.dark .card.intro{background:linear-gradient(135deg,#222,#333)}
+
+@media(max-width:700px){
+.theme-box{position:static;text-align:right;margin-bottom:8px}
+.container{padding:10px}
+.toc{grid-template-columns:1fr}
+.grid2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="theme-box">
+<select id="themeSelect" onchange="gantiTema(this.value)">
+<option value="auto">📱 Auto</option>
+<option value="light">☀️ Light</option>
+<option value="dark">🌙 Dark</option>
+</select>
+</div>
+<h1>📋 SOP KARYAWAN</h1>
+<p>Konter A Yudi Thea • Berlaku Sejak 2026</p>
+</header>
+
+<div class="container">
+<a href="index.html" class="back">⬅ Kembali ke Dashboard</a>
+
+<div class="card intro">
+<h2>🎯 Tujuan & Komitmen</h2>
+<p style="font-size:14px;opacity:.95;margin-top:8px">SOP ini dibuat untuk menjaga <b>kedisiplinan, kejujuran, dan pelayanan terbaik</b>. Semua karyawan wajib membaca, memahami, dan menandatangani SOP ini sebagai bentuk komitmen kerja di Konter A Yudi Thea.</p>
+<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+<span class="badge">📅 Jam Kerja 08.00 - 16.30 WIB</span>
+<span class="badge">🤝 Pelayanan Ramah & Jujur</span>
+<span class="badge">📝 Semua Wajib Dicatat</span>
+</div>
+</div>
+
+<div class="card">
+<div class="search-box"><span>🔍</span><input id="cariSOP" placeholder="Cari peraturan... misal: kas, telat, seragam, tutup toko" oninput="filterSOP()"></div>
+<div class="toc">
+<a href="#jam">1. Jam Kerja & Absensi</a>
+<a href="#penampilan">2. Penampilan & Etika</a>
+<a href="#pelayanan">3. Pelayanan Pelanggan</a>
+<a href="#transaksi">4. Transaksi & Keuangan</a>
+<a href="#stok">5. Stok & Gudang</a>
+<a href="#service">6. Service & Garansi</a>
+<a href="#kebersihan">7. Kebersihan & K3</a>
+<a href="#alat">8. Alat & Fasilitas</a>
+<a href="#buka-tutup">9. Buka & Tutup Toko</a>
+<a href="#larangan">10. Larangan</a>
+<a href="#sanksi">11. Sanksi & Reward</a>
+<a href="#rahasia">12. Kerahasiaan</a>
+</div>
+</div>
+
+<!-- 1 -->
+<div class="sop open" id="jam">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#e8f0ff">⏰</div> 1. Jam Kerja, Absensi & Keterlambatan</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<div class="grid2">
+<div>
+<h3>Jam Operasional</h3>
+<ul>
+<li>Senin - Sabtu: <b>08.00 - 16.30 WIB</b></li>
+<li>Istirahat: <b>12.00 - 12.30 WIB</b> bergiliran, konter tetap buka</li>
+<li>Wajib hadir <b>15 menit sebelum buka</b> untuk briefing & bersih-bersih</li>
+</ul>
+<h3>Absensi</h3>
+<ul>
+<li>Absen via grup WA / buku absen sebelum jam 08.00</li>
+<li>Terlambat >15 menit wajib lapor pemilik dengan alasan jelas</li>
+<li>Tidak masuk tanpa kabar = <span class="tag tag-larang">Alpha</span></li>
+</ul>
+</div>
+<div>
+<div class="info blue"><b>Toleransi Telat:</b> 10 menit. Lebih dari 3x telat dalam seminggu = SP1.</div>
+<h3>Izin & Sakit</h3>
+<ul>
+<li>Izin minimal H-1, tidak boleh mendadak kecuali sakit</li>
+<li>Sakit wajib kirim foto surat / obat</li>
+<li>Cuti 1 hari/bulan setelah masa kerja 3 bulan</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 2 -->
+<div class="sop" id="penampilan">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#fff4e6">👕</div> 2. Penampilan, Sikap & Etika Kerja</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li><b>Pakaian:</b> Kaos polos rapi / seragam konter, celana panjang, tidak sandal</li>
+<li><b>Sikap:</b> Ramah, sapa pelanggan <span class="kbd">"Selamat datang di Konter A"</span>, tidak main HP saat ada pelanggan</li>
+<li>Dilarang berkata kasar, mengobrol keras, atau merokok di dalam area servis</li>
+<li>Wajib <b>senyum, sapa, sabar, solutif</b> (4S)</li>
+</ul>
+<div class="info yellow">Pelanggan tidak selalu benar, tapi wajib dilayani dengan profesional. Jika ada komplain berat, panggil pemilik.</div>
+</div>
+</div>
+
+<!-- 3 -->
+<div class="sop" id="pelayanan">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#e6f9f5">🤝</div> 3. SOP Pelayanan Pelanggan</b> <span class="tag tag-wajib">WAJIB</span><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ol style="padding-left:18px">
+<li><b>Sapa dalam 5 detik</b> setelah pelanggan masuk</li>
+<li><b>Dengarkan keluhan</b> tanpa memotong, catat tipe HP & kerusakan di nota</li>
+<li><b>Berikan estimasi:</b> biaya, waktu pengerjaan, dan risiko (contoh: resiko LCD pecah)</li>
+<li><b>Konfirmasi harga</b> sebelum eksekusi, jangan asal ganti</li>
+<li>Setelah selesai, <b>test depan pelanggan</b> + berikan garansi toko (jika ada)</li>
+<li>Ucapkan terima kasih & minta pelanggan cek struk/nota</li>
+</ol>
+<div class="info blue">Dilarang janji garansi berlebihan. Standar garansi LCD: 3 hari (tidak pecah, tidak kemasukan air).</div>
+</div>
+</div>
+
+<!-- 4 -->
+<div class="sop" id="transaksi">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#f3e8ff">💳</div> 4. SOP Transaksi, Kas & Pencatatan</b><span class="tag tag-wajib">WAJIB</span><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li>Semua transaksi <b>wajib input di spreadsheet / sistem</b> saat itu juga, jangan ditunda</li>
+<li>Format catat: <span class="kbd">TANGGAL | KARYAWAN | PELANGGAN | PRODUK | TOTAL | PENGELUARAN</span></li>
+<li>Uang kas dipisah: <b>Kas Penjualan, Kas Service, Kas Luar</b></li>
+<li>Pengeluaran sekecil apapun (makan, bensin, kopi) wajib catat di kolom pengeluaran</li>
+<li>Setiap tutup toko, hitung fisik kas harus = catatan. Selisih >10rb wajib lapor</li>
+<li>Dilarang pakai uang kas untuk keperluan pribadi tanpa izin pemilik</li>
+</ul>
+<div class="info red"><b>Integritas:</b> Manipulasi nota, mark-up harga tanpa izin, atau tidak mencatat = pelanggaran berat.</div>
+</div>
+</div>
+
+<!-- 5 -->
+<div class="sop" id="stok">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#e6fbe9">📦</div> 5. SOP Stok Barang & Sparepart</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li>Barang masuk: cek fisik, cocokkan kode, foto nota supplier, input stok</li>
+<li>Barang keluar: scan/kurangi stok langsung, jangan manual ingatan</li>
+<li>Stok kosong / sisa 1 wajib lapor di grup <b>"Stok Menipis"</b></li>
+<li>Penyimpanan LCD: berdiri, jangan ditumpuk berat, beri label merk (OG/Zevan/ZS)</li>
+<li>Stock opname wajib tiap Minggu sore</li>
+</ul>
+</div>
+</div>
+
+<!-- 6 -->
+<div class="sop" id="service">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#ffe8e8">🔧</div> 6. SOP Service & Garansi</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li>Wajib lepas baterai sebelum servis, gunakan alas anti-statis</li>
+<li>Foto kondisi HP sebelum bongkar (depan, belakang, segel)</li>
+<li>Jika gagal service / resiko tinggi, konfirmasi ke pelanggan dulu</li>
+<li>Berikan nota garansi toko tertulis, bukan lisan</li>
+<li>HP tidak diambil >30 hari, wajib WA 2x, setelah itu bukan tanggung jawab toko jika hilang (simpan bukti WA)</li>
+</ul>
+</div>
+</div>
+
+<!-- 7 -->
+<div class="sop" id="kebersihan">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#e8f7ff">🧹</div> 7. Kebersihan, Kerapian & K3</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<div class="grid2">
+<div>
+<ul>
+<li>Sapu & pel lantai sebelum buka</li>
+<li>Lap etalase, meja servis, dan kaca display tiap hari</li>
+<li>Buang sampah servis (plastik LCD, segel) tiap tutup toko</li>
+<li>Peralatan servis (blower, solder) matikan & simpan rapi</li>
+</ul>
+</div>
+<div>
+<div class="info yellow"><b>K3:</b> Gunakan masker saat pakai lem LCD, jangan makan/minum di atas meja servis, sediakan APAR kecil di dekat stopkontak.</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 8 -->
+<div class="sop" id="alat">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#fff8e6">🛠️</div> 8. Penggunaan Alat & Fasilitas Toko</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li>Alat servis adalah inventaris toko, bukan milik pribadi</li>
+<li>Rusak karena kelalaian = ganti rugi 50% (musyawarah)</li>
+<li>Wifi toko hanya untuk kerja (input data, cek harga), bukan download film / game</li>
+<li>Listrik: matikan solder, blower, lampu etalase yang tidak perlu jika tutup</li>
+</ul>
+</div>
+</div>
+
+<!-- 9 -->
+<div class="sop" id="buka-tutup">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#e8f0ff">🔒</div> 9. SOP Buka & Tutup Toko (Checklist)</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<div class="grid2">
+<div>
+<h3>☀️ Buka (07.45 - 08.00)</h3>
+<ul>
+<li>☐ Buka kunci & cek CCTV nyala</li>
+<li>☐ Nyalakan lampu, kipas, dan display</li>
+<li>☐ Bersihkan meja & sapu</li>
+<li>☐ Cek nota pending kemarin</li>
+<li>☐ Absen & siap sapa pelanggan</li>
+</ul>
+</div>
+<div>
+<h3>🌙 Tutup (16.30)</h3>
+<ul>
+<li>☐ Hitung kas & cocokkan catatan</li>
+<li>☐ Simpan HP servis di laci terkunci</li>
+<li>☐ Matikan semua alat listrik & cabut solder</li>
+<li>☐ Kunci etalase & rolling door</li>
+<li>☐ Foto kondisi toko & kirim ke pemilik</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 10 -->
+<div class="sop" id="larangan">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#ffe9e9">🚫</div> 10. Larangan Keras</b><span class="tag tag-larang">SANKSI BERAT</span><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li>Dilarang <b>mencuri, menggelapkan uang/barang, atau mark-up harga sepihak</b></li>
+<li>Dilarang <b>main HP berlebihan, tidur, atau meninggalkan toko tanpa izin</b> saat jam kerja</li>
+<li>Dilarang <b>merokok, vape, atau makan di depan pelanggan</b></li>
+<li>Dilarang <b>membawa teman nongkrong lama di dalam konter</b> saat jam sibuk</li>
+<li>Dilarang <b>membuka rahasia harga modal & supplier ke orang luar / konter lain</b></li>
+<li>Dilarang <b>meminjamkan alat toko tanpa izin pemilik</b></li>
+</ul>
+</div>
+</div>
+
+<!-- 11 -->
+<div class="sop" id="sanksi">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#e6fbe9">⚖️</div> 11. Sanksi & Reward</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<div class="grid2">
+<div>
+<h3>⚠️ Sanksi Bertahap</h3>
+<ul>
+<li><b>SP1 (Teguran Lisan):</b> Telat 3x, tidak mencatat transaksi</li>
+<li><b>SP2 (Teguran Tertulis):</b> Tidak masuk tanpa kabar, kas selisih</li>
+<li><b>SP3 / Skors:</b> Pelanggaran berulang, pelayanan buruk dikomplain pelanggan</li>
+<li><b>PHK:</b> Pencurian, pemalsuan data, merusak nama baik toko</li>
+</ul>
+</div>
+<div>
+<h3>🏆 Reward</h3>
+<ul>
+<li>Bonus rajin: tidak pernah telat/alpha sebulan = +Rp100rb</li>
+<li>Bonus target: capai omset bulanan = bagi hasil</li>
+<li>Karyawan teladan tiap 3 bulan dapat THR tambahan</li>
+</ul>
+<div class="info blue">Evaluasi kinerja dilakukan tiap akhir bulan oleh pemilik.</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 12 -->
+<div class="sop" id="rahasia">
+<div class="sop-head" onclick="toggleSOP(this)"><b><div class="sop-icon" style="background:#f3e8ff">🔐</div> 12. Kerahasiaan & Integritas</b><span class="sop-arrow">›</span></div>
+<div class="sop-body">
+<ul>
+<li>Jaga rahasia harga modal, data pelanggan, dan data keuangan toko</li>
+<li>Dilarang menyebarkan foto/video internal toko tanpa izin</li>
+<li>Wajib jujur, jika ada kesalahan kerja segera lapor, jangan ditutupi</li>
+<li>Menjaga nama baik Konter A Yudi Thea di dalam maupun luar jam kerja</li>
+</ul>
+<div class="info blue">Dengan menandatangani SOP ini, karyawan dianggap telah membaca & menyetujui seluruh peraturan.</div>
+<p style="margin-top:12px;font-size:12px;opacity:.7">Tanda Tangan Karyawan & Pemilik:<br><br>__________________ &nbsp;&nbsp;&nbsp; __________________<br>Karyawan &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pemilik / Yudi</p>
+</div>
+</div>
+
+</div>
+
+<footer>© 2026 Konter A Yudi Thea • SOP Karyawan v2.0 - Update 27 Juli 2026</footer>
+
+<script>
+function toggleSOP(el){
+  const parent=el.parentElement;
+  parent.classList.toggle('open');
+}
+function filterSOP(){
+  const q=document.getElementById('cariSOP').value.toLowerCase();
+  document.querySelectorAll('.sop').forEach(s=>{
+    const txt=s.innerText.toLowerCase();
+    s.style.display = txt.includes(q) ? 'block' : 'none';
+    if(q && txt.includes(q)) s.classList.add('open');
+  });
+}
+// theme
+const media = window.matchMedia("(prefers-color-scheme: dark)");
+function gantiTema(mode){
+  localStorage.setItem("tema",mode);
+  if(mode==="dark") document.body.classList.add("dark");
+  else if(mode==="light") document.body.classList.remove("dark");
+  else document.body.classList.toggle("dark",media.matches);
+}
+const tema=localStorage.getItem("tema")||"auto";
+document.getElementById("themeSelect").value=tema; gantiTema(tema);
+media.addEventListener("change",()=>{ if(localStorage.getItem("tema")==="auto") gantiTema("auto"); });
+</script>
+</body>
+</html>

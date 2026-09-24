@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Data Stok - Konter A Yudi Thea</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#eaf3ff}
+header{background:linear-gradient(135deg,#005bea,#008cff);color:#fff;padding:18px;text-align:center;box-shadow:0 6px 14px rgba(0,0,0,.35)}
+.container{max-width:1200px;margin:auto;padding:15px}
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:0 8px 18px rgba(0,0,0,.25)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.box{background:linear-gradient(#fff,#edf5ff);padding:16px;border-radius:14px;text-align:center;box-shadow:0 5px 10px rgba(0,0,0,.2)}
+.nilai{font-size:28px;font-weight:bold;color:#0066cc}
+input,select{padding:10px;border:2px solid #0b6ef3;border-radius:10px;margin:6px}
+table{width:100%;border-collapse:collapse}
+th{background:#0066cc;color:#fff}
+th,td{padding:10px;border:1px solid #ddd;font-size:14px}
+tr:nth-child(even){background:#f7fbff}
+.ready{color:green;font-weight:bold}
+.kosong{color:red;font-weight:bold}
+ /* ===========================
+   RESPONSIVE
+=========================== */
+
+.container{
+    width:100%;
+    max-width:1200px;
+    margin:auto;
+    padding:15px;
+}
+
+.card{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    min-width:700px;
+    border-collapse:collapse;
+}
+
+/* Tablet */
+@media (max-width:992px){
+
+.nilai{
+    font-size:24px;
+}
+
+th,td{
+    font-size:13px;
+    padding:8px;
+}
+
+}
+
+/* HP */
+@media (max-width:768px){
+
+.container{
+    padding:10px;
+}
+
+.stats{
+    grid-template-columns:repeat(2,1fr);
+}
+
+.box{
+    padding:12px;
+}
+
+.nilai{
+    font-size:20px;
+}
+
+input,
+select{
+    width:100%;
+    margin:5px 0;
+}
+
+.card{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+}
+
+table{
+    min-width:700px;
+}
+
+th,
+td{
+    white-space:nowrap;
+}
+
+}
+ /* ===== DARK MODE LENGKAP ===== */
+
+body.dark{
+    background:#121212;
+    color:#fff;
+}
+
+body.dark .container{
+    background:transparent;
+}
+
+body.dark .card{
+    background:#242424;
+    border:1px solid #3a3a3a;
+    box-shadow:0 6px 15px rgba(0,0,0,.45);
+}
+
+body.dark .box{
+    background:#2d2d2d;
+    color:#fff;
+    border:1px solid #444;
+}
+
+body.dark .nilai{
+    color:#6cb8ff;
+}
+
+body.dark input,
+body.dark select{
+    background:#2b2b2b;
+    color:#fff;
+    border:1px solid #555;
+}
+
+body.dark table{
+    background:#242424;
+}
+
+body.dark th{
+    background:#3a3a3a;
+    color:#fff;
+}
+
+body.dark td{
+    background:#242424;
+    color:#fff;
+    border-color:#444;
+}
+
+body.dark tr:nth-child(even) td{
+    background:#2d2d2d;
+}
+
+body.dark tr:hover td{
+    background:#353535;
+}
+
+body.dark .ready{
+    color:#39d353;
+}
+
+body.dark .kosong{
+    color:#ff6b6b;
+}
+</style>
+</head>
+<body>
+<header>
+ <div style="text-align:right;padding:10px 15px;">
+<select id="themeSelect" onchange="gantiTema(this.value)">
+    <option value="auto">📱 Auto</option>
+    <option value="light">☀️ Light</option>
+    <option value="dark">🌙 Dark</option>
+</select>
+ </div>
+ <h1>📦 DATA STOK BARANG</h1><p>Konter A Yudi Thea</p></header>
+
+<div class="container">
+
+<div class="card">
+<div class="stats">
+<div class="box"><div>Total Produk</div><div id="totalProduk" class="nilai">0</div></div>
+<div class="box"><div>Ready</div><div id="ready" class="nilai">0</div></div>
+<div class="box"><div>Kosong</div><div id="kosong" class="nilai">0</div></div>
+<div class="box"><div>Nilai Stok</div><div id="nilai" class="nilai">Rp0</div></div>
+</div>
+</div>
+
+<div class="card">
+<input id="cari" placeholder="🔍 Cari barang...">
+<select id="merk">
+<option value="">Semua Merk</option>
+<option>og</option>
+<option>zevan</option>
+<option>zs</option>
+<option>mgku</option>
+</select>
+
+<table>
+<thead>
+<tr>
+<th>Kode</th>
+<th>Nama Barang</th>
+<th>Harga Tunai</th>
+<th>Sisa</th>
+<th>Merk</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+
+</div>
+
+<script>
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTAP_R50frV13whqx54ctjplc-8xhcN53rHEVk5mkhLeZE283xWnr6TdTBFr-KFymEiaYE_NWgGthpo/pub?gid=2070671735&single=true&output=csv";
+let rows=[];
+
+fetch(CSV_URL).then(r=>r.text()).then(t=>{
+ const lines=t.trim().split(/\r?\n/);
+ for(let i=1;i<lines.length;i++){
+   const c = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g)
+                 .map(v => v.replace(/^"|"$/g,""));
+   if(c.length<9) continue;
+   rows.push({
+     kode:c[0]||"",
+     nama:c[1]||"",
+     harga:parseInt((c[3]||"0").replace(/[^0-9]/g,""),10)||0,
+     sisa:parseFloat((c[6]||"0").replace(/[^0-9.-]/g,""))||0,
+     merk:(c[7]||"").trim().toLowerCase(),
+     status:(c[8]||"").trim()
+   });
+ }
+ render();
+});
+
+function render(){
+ const cari=document.getElementById("cari").value.toLowerCase();
+ const merk=document.getElementById("merk").value.toLowerCase();
+ let html="",ready=0,kosong=0,nilai=0,total=0;
+ rows.forEach(r=>{
+   if (
+    cari &&
+    !(
+        r.nama.toLowerCase().includes(cari) ||
+        r.kode.toLowerCase().includes(cari) ||
+        r.merk.toLowerCase().includes(cari)
+    )
+) return;
+   total++;
+   if(r.sisa>0){ready++; nilai+=r.sisa*r.harga;}
+   else kosong++;
+   html+=`<tr>
+   <td>${r.kode}</td>
+   <td>${r.nama}</td>
+   <td>Rp ${r.harga.toLocaleString('id-ID')}</td>
+   <td>${r.sisa}</td>
+   <td>${r.merk}</td>
+   <td class="${r.sisa>0?'ready':'kosong'}">${r.sisa>0?'READY':'KOSONG'}</td>
+   </tr>`;
+ });
+ document.getElementById("tbody").innerHTML=html;
+ document.getElementById("totalProduk").textContent=total;
+ document.getElementById("ready").textContent=ready;
+ document.getElementById("kosong").textContent=kosong;
+ document.getElementById("nilai").textContent="Rp "+nilai.toLocaleString("id-ID");
+}
+document.getElementById("cari").addEventListener("input",render);
+document.getElementById("merk").addEventListener("change",render);
+</script>
+ <script>
+const media = window.matchMedia("(prefers-color-scheme: dark)");
+
+function gantiTema(mode){
+
+    localStorage.setItem("tema", mode);
+
+    if(mode==="dark"){
+        document.body.classList.add("dark");
+    }else if(mode==="light"){
+        document.body.classList.remove("dark");
+    }else{
+        document.body.classList.toggle("dark", media.matches);
+    }
+
+}
+
+const tema = localStorage.getItem("tema") || "auto";
+
+document.getElementById("themeSelect").value = tema;
+
+gantiTema(tema);
+
+media.addEventListener("change", () => {
+    if(localStorage.getItem("tema")==="auto"){
+        gantiTema("auto");
+    }
+});
+ </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NOTA 58MM - KONTER A YUDI THEA - FINAL FIX</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:'Inter',sans-serif;background:#eef0ff;color:#1e293b;padding:10px}
+.header{background:linear-gradient(135deg,#0b63f0,#1976ff);color:white;padding:12px;border-radius:14px;display:flex;justify-content:center;margin-bottom:12px;position:sticky;top:10px;z-index:20}
+.card{background:white;border-radius:16px;padding:14px;box-shadow:0 4px 12px rgba(0,0,0,.06);border:1px solid #e8eaff;margin-bottom:12px}
+.label{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:4px;display:block;letter-spacing:.5px}
+.input{width:100%;height:44px;padding:0 12px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;font-size:13px;outline:none;margin-bottom:10px;display:block}
+.input:focus{background:white;border-color:#0b63f0;box-shadow:0 0 0 3px rgba(11,99,240,.12)}
+textarea.input{height:70px;padding:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{height:44px;border-radius:12px;border:0;font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-dark{background:#0f172a;color:white;width:100%}
+.btn-green{background:#25D366;color:white;width:100%}
+.btn-primary{background:#0b63f0;color:white;width:100%}
+.struk{width:300px;max-width:100%;margin:0 auto;background:white;border-radius:12px;border:1px dashed #cbd5e1;padding:12px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.4}
+.sisa{background:#0f172a;color:white;border-radius:10px;padding:10px;display:flex;justify-content:space-between}
+.tabs{display:flex;background:#0f172a;border-radius:12px;padding:4px;gap:4px;width:fit-content;margin-bottom:12px}
+.tabs button{padding:8px 14px;border-radius:8px;border:0;background:transparent;color:#94a3b8;font-weight:700;font-size:11px;cursor:pointer}
+.tabs button.active{background:white;color:#0f172a}
+@media print{body *{visibility:hidden} #struk-area,#struk-area *{visibility:visible} #struk-area{position:absolute;left:0;top:0;width:58mm;border:none}}
+</style>
+</head>
+<body>
+
+<div class="header"><b>🏪 KONTER A YUDI THEA</b></div>
+
+<div class="card">
+<span class="label">Nama Toko</span><input id="tokoNama" class="input" value="A YUDI THEA">
+<span class="label">Alamat Toko</span><input id="tokoAlamat" class="input" value="Depan pasar hewan blok Jum'at maja utara">
+<span class="label">WA Toko</span><input id="tokoHp" class="input" value="0823-1926-4646">
+<span class="label">URL API WA RAILWAY (Sudah Auto Terisi)</span><input id="apiUrl" class="input" style="font-size:10px" value="https://api-wa-konter-production.up.railway.app/kirim-wa">
+</div>
+
+<div class="tabs">
+<button id="btnService" class="active" onclick="setMode('service')">📱 SERVICE</button>
+<button id="btnBelanja" onclick="setMode('belanja')">🛒 BELANJA</button>
+</div>
+
+<div id="serviceForm" class="card">
+<div style="display:flex;justify-content:space-between"><b style="font-size:12px">📱 Form Service HP</b><span id="sNo" style="font-family:'JetBrains Mono';font-size:11px;font-weight:700"></span></div>
+<div class="grid2" style="margin-top:10px">
+<div><span class="label">No Nota</span><input id="sNoInput" class="input"></div>
+<div><span class="label">Tanggal</span><input id="sTanggal" type="date" class="input"></div>
+<div><span class="label">Nama Pelanggan *</span><input id="sNama" class="input" placeholder="Nama pelanggan - PASTI BISA KETIK"></div>
+<div><span class="label">No HP Pelanggan *</span><input id="sHp" class="input" placeholder="08xx" inputmode="numeric"></div>
+<div><span class="label">Merk / Tipe HP</span><input id="sTipe" class="input" placeholder="Redmi Note 12 / iPhone 11"></div>
+<div><span class="label">IMEI</span><input id="sImei" class="input" placeholder="IMEI"></div>
+</div>
+<span class="label">Keluhan</span><textarea id="sKeluhan" class="input" placeholder="Mati total, kena air..."></textarea>
+<span class="label">Tindakan</span><textarea id="sTindakan" class="input" placeholder="Ganti LCD, Ganti IC..."></textarea>
+<div class="grid2">
+<div><span class="label">Biaya</span><input id="sBiaya" type="number" class="input" value="150000"></div>
+<div><span class="label">DP</span><input id="sDp" type="number" class="input" value="50000"></div>
+</div>
+<div class="sisa" style="margin-bottom:10px"><span>SISA BAYAR</span><b id="sSisaTxt">Rp 0</b></div>
+<div class="grid2">
+<div><span class="label">Garansi</span><select id="sGaransi" class="input"><option>7 Hari</option><option>14 Hari</option><option>30 Hari</option><option>Tidak Garansi</option></select></div>
+<div><span class="label">Status (Auto WA jika Selesai/Lunas)</span><select id="sStatus" class="input"><option>Masuk</option><option>Proses</option><option>Selesai</option><option>Sudah Diambil</option><option>Lunas</option><option>Full</option></select></div>
+</div>
+<span class="label">Catatan Struk</span><input id="sCatatan" class="input" value="Barang tidak diambil >30 hari bukan tanggung jawab kami">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+<button onclick="simpanService()" class="btn btn-dark">💾 Simpan & Auto WA</button>
+<button onclick="shareWA()" class="btn btn-green">💬 Bagikan WA</button>
+<button onclick="cetak()" class="btn btn-primary" style="grid-column:1/3">🖨️ Cetak 58mm</button>
+</div>
+</div>
+
+<div id="belanjaForm" class="card" style="display:none">
+<b style="font-size:12px">🛒 Form Belanja</b>
+<div id="items"></div>
+<button onclick="addItem()" class="btn" style="background:#f1f5f9;border:1px solid #e2e8f0;width:100%;margin:8px 0">+ Tambah Barang</button>
+<div class="grid2"><div><span class="label">Diskon</span><input id="bDiskon" type="number" class="input" value="0"></div><div><span class="label">Bayar</span><input id="bBayar" type="number" class="input" value="0"></div></div>
+<div style="display:flex;justify-content:space-between;font-weight:800;margin:10px 0"><span>TOTAL</span><span id="bTotalTxt">Rp 0</span></div>
+<button onclick="simpanBelanja()" class="btn btn-dark">💾 Simpan Belanja</button>
+<button onclick="cetak()" class="btn btn-primary" style="margin-top:8px">🖨️ Cetak</button>
+</div>
+
+<div class="card">
+<b style="font-size:11px">🖨️ PREVIEW 58MM LIVE</b>
+<div id="struk-area" class="struk" style="margin-top:10px">
+<div style="text-align:center"><b id="pToko">A YUDI THEA</b><br><span id="pAlamat" style="font-size:9px">Depan pasar hewan blok Jum'at maja utara</span><br>WA: <span id="pHp">0823-1926-4646</span></div>
+<div style="border-top:1px dashed #ccc;margin:8px 0"></div>
+<div id="pContent">Isi form dulu...</div>
+<div style="border-top:1px dashed #ccc;margin:8px 0"></div>
+<div style="text-align:center;font-size:9px">Terima kasih 🙏</div>
+</div>
+</div>
+
+<script>
+function genNo(p){const d=new Date();return `${p}-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${Math.floor(Math.random()*900)+100}`}
+function rupiah(n){return 'Rp '+new Intl.NumberFormat('id-ID').format(Number(n)||0)}
+function today(){return new Date().toISOString().slice(0,10)}
+let items=[{nama:'Tempered Glass',qty:1,harga:35000}];
+let mode='service';
+function setMode(m){mode=m;document.getElementById('serviceForm').style.display=m==='service'?'block':'none';document.getElementById('belanjaForm').style.display=m==='belanja'?'block':'none';document.getElementById('btnService').className=m==='service'?'active':'';document.getElementById('btnBelanja').className=m==='belanja'?'active':'';calc()}
+function calc(){
+  const biaya=Number(document.getElementById('sBiaya').value||0);const dp=Number(document.getElementById('sDp').value||0);
+  document.getElementById('sSisaTxt').textContent=rupiah(biaya-dp);
+  document.getElementById('pToko').textContent=document.getElementById('tokoNama').value;
+  document.getElementById('pAlamat').textContent=document.getElementById('tokoAlamat').value;
+  document.getElementById('pHp').textContent=document.getElementById('tokoHp').value;
+  let sub=items.reduce((a,b)=>a+b.qty*b.harga,0);let dis=Number(document.getElementById('bDiskon')?.value||0);
+  document.getElementById('bTotalTxt').textContent=rupiah(sub-dis);
+  renderPreview();
+}
+function renderPreview(){
+  if(mode==='service'){
+    const no=document.getElementById('sNoInput').value,nama=document.getElementById('sNama').value,hp=document.getElementById('sHp').value,tipe=document.getElementById('sTipe').value,kel=document.getElementById('sKeluhan').value,biaya=document.getElementById('sBiaya').value,dp=document.getElementById('sDp').value,stat=document.getElementById('sStatus').value;
+    document.getElementById('pContent').innerHTML=`NOTA SERVICE<br>No: ${no}<br>Tgl: ${document.getElementById('sTanggal').value}<br>Status: ${stat}<br><br>Plg: ${nama||'-'}<br>HP: ${hp||'-'}<br>Tipe: ${tipe||'-'}<br><br>Keluhan: ${kel||'-'}<br>Biaya: ${rupiah(biaya)}<br>DP: ${rupiah(dp)}<br><b>SISA: ${rupiah(Number(biaya)-Number(dp))}</b>`;
+  }else{
+    document.getElementById('pContent').innerHTML=items.map((it,i)=>`${i+1}. ${it.nama} ${it.qty}x${rupiah(it.harga)}<br>`).join('')+`<br><b>TOTAL: ${document.getElementById('bTotalTxt').textContent}</b>`;
+  }
+}
+function renderItems(){
+  document.getElementById('items').innerHTML=items.map((it,idx)=>`<div style="display:grid;grid-template-columns:1fr 50px 80px 30px;gap:6px;margin-bottom:6px"><input value="${it.nama}" oninput="items[${idx}].nama=this.value;calc()" class="input" style="margin:0;height:36px"><input type="number" value="${it.qty}" oninput="items[${idx}].qty=Number(this.value);calc()" class="input" style="margin:0;height:36px"><input type="number" value="${it.harga}" oninput="items[${idx}].harga=Number(this.value);calc()" class="input" style="margin:0;height:36px"><button onclick="items.splice(${idx},1);renderItems();calc()" style="border:0;background:#fee2e2;border-radius:8px">x</button></div>`).join('');
+}
+function addItem(){items.push({nama:'',qty:1,harga:0});renderItems()}
+async function simpanService(){
+  const data={no:document.getElementById('sNoInput').value,nama:document.getElementById('sNama').value,hp:document.getElementById('sHp').value,tipe:document.getElementById('sTipe').value,keluhan:document.getElementById('sKeluhan').value,tindakan:document.getElementById('sTindakan').value,biaya:document.getElementById('sBiaya').value,dp:document.getElementById('sDp').value,status:document.getElementById('sStatus').value};
+  localStorage.setItem('nota_terakhir',JSON.stringify(data));
+  alert('✅ Tersimpan: '+data.no);
+  const boleh=["Selesai","Sudah Diambil","Lunas","Full"];
+  if(boleh.includes(data.status) && data.hp){
+    const api=document.getElementById('apiUrl').value;
+    let noWA=data.hp.replace(/[^0-9]/g,'');if(noWA.startsWith('0'))noWA='62'+noWA.slice(1);
+    const pesan=`Halo Kak${data.nama} 🙏\nHP ${data.tipe} No ${data.no} sudah ${data.status} ✅\nBiaya: ${rupiah(data.biaya)} - DP: ${rupiah(data.dp)} - SISA: ${rupiah(Number(data.biaya)-Number(data.dp))}\nAmbil di konter ${document.getElementById('tokoNama').value} ya 🙏`;
+    try{await fetch(api,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nomor:noWA,pesan})});alert('✅ Auto WA terkirim ke '+data.nama)}catch(e){alert('Gagal Auto WA: '+e.message+' - pakai Bagikan WA manual aja')}}
+}
+function shareWA(){
+  const nama=document.getElementById('sNama').value||'Kak';const no=document.getElementById('sNoInput').value;const tipe=document.getElementById('sTipe').value;
+  const txt=`*${document.getElementById('tokoNama').value}*\nNo: ${no}\nPelanggan: ${nama}\nTipe: ${tipe}\nSISA: ${document.getElementById('sSisaTxt').textContent}\nTerima kasih!`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`,'_blank');
+}
+function cetak(){window.print()}
+function simpanBelanja(){alert('Belanja disimpan: '+document.getElementById('bTotalTxt').textContent)}
+document.getElementById('sNoInput').value=genNo('SRV');document.getElementById('sNo').textContent=document.getElementById('sNoInput').value;
+document.getElementById('sTanggal').value=today();
+['tokoNama','tokoAlamat','tokoHp','sNoInput','sTanggal','sNama','sHp','sTipe','sKeluhan','sBiaya','sDp','sStatus','bDiskon','bBayar'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',calc)});
+renderItems();calc();
+</script>
+</body>
+</html>
