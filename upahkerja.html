@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html lang="id">
-<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
-(function() {
-  if (window.__playableTouchPatchInstalled) return;
-  window.__playableTouchPatchInstalled = true;
-  var origAdd = EventTarget.prototype.addEventListener;
-  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
-  EventTarget.prototype.addEventListener = function(type, listener, options) {
-    if (blockedTypes[type]) {
-      if (options === undefined || options === null) {
-        options = { passive: true };
-      } else if (typeof options === 'boolean') {
-        options = { capture: options, passive: true };
-      } else {
-        options = Object.assign({}, options, { passive: true });
-      }
-    }
-    return origAdd.call(this, type, listener, options);
-  };
-})();
-</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dashboard Upah - Tanpa Info Tambahan</title>
+<title>Dashboard Upah - Dengan Navigasi Bulan</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Poppins',Arial,sans-serif}
@@ -38,6 +40,13 @@ body{background:#eef0ff;color:#1e293b;min-height:100vh}
 .card-head h3{font-family:'Poppins';font-size:13px;font-weight:700}
 .badge{font-size:10px;padding:5px 10px;border-radius:20px;font-weight:800;background:#e0e7ff;color:#1e40af}
 .badge-green{background:#dcfce7;color:#166534}
+.month-nav{background:white;border-radius:18px;padding:14px 16px;box-shadow:0 6px 18px rgba(0,0,0,.06);border:1px solid #e8eaff;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.month-nav .nav-btn{width:44px;height:44px;border:none;border-radius:12px;background:#0b63f0;color:white;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.month-nav .nav-btn:disabled{opacity:.35;cursor:not-allowed}
+.month-center{flex:1;text-align:center}
+.month-center b{font-family:'Poppins';font-size:16px;font-weight:800;display:block;color:#0f172a}
+.month-center small{font-size:11px;color:#64748b}
+.month-select{width:100%;margin-top:8px;padding:10px 12px;border-radius:10px;border:1px solid #e2e8f0;background:#f8fafc;font-size:12px;font-weight:700;color:#0f172a}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .mini-card{background:white;border-radius:16px;padding:14px;position:relative;overflow:hidden;border:1px solid #eef0ff;box-shadow:0 4px 12px rgba(0,0,0,.04)}
 .mini-card .circle{position:absolute;right:-10px;top:-10px;width:56px;height:56px;border-radius:50%;opacity:.18}
@@ -62,22 +71,32 @@ body{background:#eef0ff;color:#1e293b;min-height:100vh}
 .row .value{font-weight:800}
 .sisa-box{background:#f8fafc;border-radius:12px;padding:12px;display:flex;justify-content:space-between;margin-top:8px}
 .btn{width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#0b63f0,#1976ff);color:white;font-weight:800;cursor:pointer;margin-top:10px}
+.btn-secondary{background:#f1f5f9;color:#0f172a}
 table{width:100%;border-collapse:collapse;margin-top:8px}
 th{background:#0b63f0;color:white;padding:10px 8px;font-size:11px;text-align:left}
 td{padding:9px 8px;border-bottom:1px solid #f1f5f9;font-size:11px}
 .pill{display:inline-block;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800}
 .pill-green{background:#dcfce7;color:#166534}.pill-red{background:#fee2e2;color:#991b1b}
-/* INFO DISEMBUNYIKAN */
-#periodeBox, #lastUpdate, #debug, #farhanLast, #zakaLast { display:none !important; }
+#debug{font-size:10px;color:#64748b;margin-top:8px;word-break:break-all}
 </style>
 </head>
 <body>
 <div class="header"><div class="menu">☰</div><div class="title"><b>🏪 KONTER A YUDI THEA</b><small>Dashboard Internal Pemilik & Karyawan</small></div><div style="width:36px"></div></div>
 <div class="container">
-<div id="periodeBox"></div><div id="lastUpdate"></div>
+
+<!-- NAVIGASI BULAN BARU -->
+<div class="month-nav">
+  <button class="nav-btn" id="prevBtn" onclick="changeMonth(-1)">‹</button>
+  <div class="month-center">
+    <b id="monthLabel">Memuat...</b>
+    <small id="monthSub">-</small>
+    <select class="month-select" id="monthSelect" onchange="onSelectMonth()"></select>
+  </div>
+  <button class="nav-btn" id="nextBtn" onclick="changeMonth(1)">›</button>
+</div>
 
 <div class="card">
-  <div class="card-head"><h3>📊 Ringkasan Upah - 1 Bulan Penuh</h3><span class="badge" id="badgePeriode">1 - 31</span></div>
+  <div class="card-head"><h3>📊 Ringkasan Upah</h3><span class="badge" id="badgePeriode">1 - 31</span></div>
   <div class="grid2">
     <div class="mini-card blue"><div class="circle"></div><div class="label">Total Upah Farhan</div><div class="value" id="farhanUpah">Rp0</div><div class="label" id="farhanUpahSub" style="text-transform:none">-</div></div>
     <div class="mini-card purple"><div class="circle"></div><div class="label">Total Upah Zaka</div><div class="value" id="zakaUpah">Rp0</div><div class="label" id="zakaUpahSub" style="text-transform:none">-</div></div>
@@ -90,26 +109,24 @@ td{padding:9px 8px;border-bottom:1px solid #f1f5f9;font-size:11px}
 
 <div class="card karyawan-card">
   <div class="karyawan-header"><div class="avatar farhan">F</div><div class="karyawan-info"><b>Farhan - Karyawan 1</b><small>0813-1563-963 • Upah Harian 80k</small></div><span class="badge badge-green" style="margin-left:auto">Aktif</span></div>
-  <div class="row"><div class="label">Total Upah (1 Bulan)</div><div class="value" style="color:#2563eb" id="farhanUpah2">Rp0</div></div>
+  <div class="row"><div class="label">Total Upah (Bulan Ini)</div><div class="value" style="color:#2563eb" id="farhanUpah2">Rp0</div></div>
   <div class="row"><div class="label">Pengambilan Uang</div><div class="value" style="color:#dc2626" id="farhanAmbil2">Rp0</div></div>
   <div class="sisa-box"><div class="label" style="font-weight:800;color:#0f172a">Sisa Upah Bersih</div><b class="value" style="color:#16a34a;font-size:20px" id="farhanSisa2">Rp0</b></div>
-  <div id="farhanLast"></div>
 </div>
 
 <div class="card karyawan-card zaka">
   <div class="karyawan-header"><div class="avatar zaka">Z</div><div class="karyawan-info"><b>Zaka - Karyawan 2</b><small>0831-8663-6396 • Upah Harian 115k</small></div><span class="badge badge-green" style="margin-left:auto">Aktif</span></div>
-  <div class="row"><div class="label">Total Upah (1 Bulan)</div><div class="value" style="color:#7c3aed" id="zakaUpah2">Rp0</div></div>
+  <div class="row"><div class="label">Total Upah (Bulan Ini)</div><div class="value" style="color:#7c3aed" id="zakaUpah2">Rp0</div></div>
   <div class="row"><div class="label">Pengambilan Uang</div><div class="value" style="color:#dc2626" id="zakaAmbil2">Rp0</div></div>
   <div class="sisa-box"><div class="label" style="font-weight:800;color:#0f172a">Sisa Upah Bersih</div><b class="value" style="color:#16a34a;font-size:20px" id="zakaSisa2">Rp0</b></div>
-  <div id="zakaLast"></div>
 </div>
 
 <div class="card">
-  <div class="card-head"><h3>📜 Riwayat Pengambilan</h3><span class="badge" style="background:#dbeafe;color:#1e40af">Bulan Ini</span></div>
+  <div class="card-head"><h3>📜 Riwayat Pengambilan</h3><span class="badge" style="background:#dbeafe;color:#1e40af" id="historyBadge">Bulan Ini</span></div>
   <div style="max-height:420px;overflow:auto;border-radius:12px;border:1px solid #eef0ff">
     <table><thead><tr><th>Tanggal</th><th>Nama</th><th>Nominal</th></tr></thead><tbody id="history"><tr><td colspan="3" style="text-align:center;padding:20px;color:#0b63f0;font-weight:700">Memuat...</td></tr></tbody></table>
   </div>
-  <button class="btn" onclick="loadData()">🔄 Refresh Data</button>
+  <button class="btn" onclick="fetchAll()">🔄 Refresh Data</button>
   <div id="debug"></div>
 </div>
 
@@ -119,47 +136,142 @@ td{padding:9px 8px;border-bottom:1px solid #f1f5f9;font-size:11px}
 const SHEET_ID = "1iPbtRGldW5yz6tuUZ5oHzMGsnNb4cHyCbAEMkq51qK4";
 const CSV_UPAH = (t) => `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=UPAH&nocache=${t}`;
 const CSV_FIX  = (t) => `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=FIX%20RUMUS1&nocache=${t}`;
+
+let cached = { parsedUpah: [], fixRows: [], allDates: [], months: [] };
+let currentYear, currentMonth; // 0-indexed month
+
 function rupiah(n){ return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(n)||0); }
 function parseCSV(text){const rows=[];let row=[];let field='';let inQ=false;for(let i=0;i<text.length;i++){const c=text[i];if(c=='"'){if(inQ&&text[i+1]=='"'){field+='"';i++}else inQ=!inQ}else if(c==','&&!inQ){row.push(field);field=''}else if((c=='\n'||c=='\r')&&!inQ){if(field!==''||row.length>0){row.push(field);rows.push(row);row=[];field=''}if(c=='\r'&&text[i+1]=='\n')i++}else field+=c}if(field!==''||row.length>0){row.push(field);rows.push(row)}return rows}
 function parseDateFlexible(s){if(!s)return null;s=s.toString().trim().replace(/"/g,'');let m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m){return new Date(parseInt(m[3]),parseInt(m[2])-1,parseInt(m[1]))}m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m){return new Date(parseInt(m[1]),parseInt(m[2])-1,parseInt(m[3]))}const d=new Date(s);return isNaN(d)?null:d}
 function num(v){if(v==null)return 0;let s=v.toString().replace(/[^0-9\-]/g,'').trim();if(s===''||s==='-')return 0;const n=Number(s);return isNaN(n)?0:n}
 async function fetchCSV(url){const res=await fetch(url,{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);return parseCSV(await res.text())}
 function containsAmbilUang(text){const s=text.toLowerCase();return s.includes('ambil')&&(s.includes('uang')||s.includes('unag'))}
-async function loadData(){
+
+async function fetchAll(){
   const t=Date.now();
+  document.getElementById('history').innerHTML = '<tr><td colspan="3" style="text-align:center;padding:20px;color:#0b63f0;font-weight:700">Memuat...</td></tr>';
   try{
     const [rowsUpahRaw, rowsFixRaw] = await Promise.all([fetchCSV(CSV_UPAH(t)), fetchCSV(CSV_FIX(t))]);
     let upahHeaderIdx=-1;for(let i=0;i<Math.min(5,rowsUpahRaw.length);i++){if(rowsUpahRaw[i].join(' ').toLowerCase().includes('tanggal')){upahHeaderIdx=i;break}}if(upahHeaderIdx===-1)upahHeaderIdx=1;
     const upahRows=rowsUpahRaw.slice(upahHeaderIdx+1);
     let fixHeaderIdx=-1;for(let i=0;i<Math.min(5,rowsFixRaw.length);i++){if(rowsFixRaw[i].join(' ').toLowerCase().includes('karyawan')){fixHeaderIdx=i;break}}if(fixHeaderIdx===-1)fixHeaderIdx=0;
     const fixRows=rowsFixRaw.slice(fixHeaderIdx+1);
+
     let allDates=[];let parsedUpah=[];
     upahRows.forEach(r=>{if(!r||r.length<6)return;const d=parseDateFlexible(r[0]);if(!d)return;if(r.join('').trim()==='')return;parsedUpah.push({d,r});allDates.push(d)});
     fixRows.forEach(r=>{const d=parseDateFlexible(r[0]);if(d)allDates.push(d)});
+
     if(allDates.length===0)throw new Error('Tidak ada tanggal');
-    let latestRaw=new Date(Math.max(...allDates.map(d=>d.getTime())));
-    let target;if(latestRaw.getDate()<=3){target=new Date(latestRaw.getFullYear(),latestRaw.getMonth()-1,1)}else{target=new Date(latestRaw.getFullYear(),latestRaw.getMonth(),1)}
-    let startDate=new Date(target.getFullYear(),target.getMonth(),1);
-    let endDate=new Date(target.getFullYear(),target.getMonth()+1,0);
-    document.getElementById('badgePeriode').textContent=`1 - ${endDate.getDate()} ${endDate.toLocaleDateString('id-ID',{month:'short'})}`;
-    let farhanUpah=0,zakaUpah=0;parsedUpah.forEach(({d,r})=>{if(d>=startDate&&d<=endDate){farhanUpah+=num(r[5]);zakaUpah+=num(r[11])}});
-    let history=[];let farhanAmbil=0,zakaAmbil=0;
-    fixRows.forEach(r=>{const d=parseDateFlexible(r[0]);if(!d)return;if(d<startDate||d>endDate)return;const rowText=r.join(' ').toLowerCase();if(!containsAmbilUang(rowText))return;const isFarhan=rowText.includes('farhan');const isZaka=rowText.includes('zaka');if(!isFarhan&&!isZaka)return;let nominal=num(r[12]||0);if(nominal===0)nominal=num(r[11]||0);if(nominal===0){let max=0;r.forEach(c=>{const n=num(c);if(n>1000&&n>max)max=n});nominal=max}if(nominal===0)return;history.push({d,karyawan:isFarhan?'farhan':'zaka',nominal});if(isFarhan)farhanAmbil+=nominal;if(isZaka)zakaAmbil+=nominal});
-    history.sort((a,b)=>b.d-a.d);
-    const farhanSisa=farhanUpah-farhanAmbil;const zakaSisa=zakaUpah-zakaAmbil;
-    document.getElementById('farhanUpah').textContent=rupiah(farhanUpah);document.getElementById('farhanUpah2').textContent=rupiah(farhanUpah);
-    document.getElementById('farhanUpahSub').textContent=`${parsedUpah.filter(p=>p.d>=startDate&&p.d<=endDate).length} hari`;
-    document.getElementById('zakaUpah').textContent=rupiah(zakaUpah);document.getElementById('zakaUpah2').textContent=rupiah(zakaUpah);
-    document.getElementById('zakaUpahSub').textContent=`${parsedUpah.filter(p=>p.d>=startDate&&p.d<=endDate).length} hari`;
-    document.getElementById('farhanAmbil').textContent=rupiah(farhanAmbil);document.getElementById('farhanAmbil2').textContent=rupiah(farhanAmbil);
-    document.getElementById('zakaAmbil').textContent=rupiah(zakaAmbil);document.getElementById('zakaAmbil2').textContent=rupiah(zakaAmbil);
-    document.getElementById('farhanSisa').textContent=rupiah(farhanSisa);document.getElementById('farhanSisa2').textContent=rupiah(farhanSisa);
-    document.getElementById('zakaSisa').textContent=rupiah(zakaSisa);document.getElementById('zakaSisa2').textContent=rupiah(zakaSisa);
-    let htmlHist='';history.slice(0,80).forEach(h=>{const isFarhan=h.karyawan==='farhan';htmlHist+=`<tr><td>${h.d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'})}</td><td><span class="pill ${isFarhan?'pill-green':'pill-red'}">${isFarhan?'Farhan':'Zaka'}</span></td><td style="font-weight:800;color:#dc2626">${rupiah(h.nominal)}</td></tr>`});
-    document.getElementById('history').innerHTML=htmlHist||'<tr><td colspan="3" style="text-align:center;padding:20px">Tidak ada data</td></tr>';
-  }catch(e){document.getElementById('history').innerHTML=`<tr><td colspan="3" style="color:red">❌ ${e.message}</td></tr>`}
+
+    // Build unique months list
+    const monthSet = new Map();
+    allDates.forEach(d=>{const key=`${d.getFullYear()}-${String(d.getMonth()).padStart(2,'0')}`;monthSet.set(key,{y:d.getFullYear(), m:d.getMonth()})});
+    const months = Array.from(monthSet.values()).sort((a,b)=> a.y!==b.y ? a.y-b.y : a.m-b.m);
+
+    cached = { parsedUpah, fixRows, allDates, months };
+
+    // Populate dropdown
+    const sel = document.getElementById('monthSelect');
+    sel.innerHTML='';
+    months.forEach(({y,m})=>{
+      const dt = new Date(y,m,1);
+      const label = dt.toLocaleDateString('id-ID',{month:'long', year:'numeric'});
+      const opt = document.createElement('option');
+      opt.value = `${y}-${m}`;
+      opt.textContent = label.charAt(0).toUpperCase()+label.slice(1);
+      sel.appendChild(opt);
+    });
+
+    // Initial month: logika lama -> kalau tgl terakhir <=3 maka bulan sebelumnya
+    if(currentYear===undefined){
+      let latestRaw=new Date(Math.max(...allDates.map(d=>d.getTime())));
+      let target;
+      if(latestRaw.getDate()<=3){target=new Date(latestRaw.getFullYear(),latestRaw.getMonth()-1,1)}
+      else{target=new Date(latestRaw.getFullYear(),latestRaw.getMonth(),1)}
+      currentYear = target.getFullYear();
+      currentMonth = target.getMonth();
+    }
+
+    sel.value = `${currentYear}-${currentMonth}`;
+    renderMonth(currentYear, currentMonth);
+
+  }catch(e){
+    document.getElementById('history').innerHTML=`<tr><td colspan="3" style="color:red">❌ ${e.message}</td></tr>`;
+    document.getElementById('debug').textContent = e.stack||e.message;
+  }
 }
-loadData();
+
+function renderMonth(y,m){
+  currentYear=y; currentMonth=m;
+  const startDate=new Date(y,m,1);
+  const endDate=new Date(y,m+1,0);
+
+  // Update label
+  const monthLong = startDate.toLocaleDateString('id-ID',{month:'long', year:'numeric'});
+  document.getElementById('monthLabel').textContent = monthLong.charAt(0).toUpperCase()+monthLong.slice(1);
+  document.getElementById('monthSub').textContent = `1 - ${endDate.getDate()} ${endDate.toLocaleDateString('id-ID',{month:'long'})} ${y}`;
+  document.getElementById('badgePeriode').textContent=`1 - ${endDate.getDate()} ${endDate.toLocaleDateString('id-ID',{month:'short'})}`;
+  document.getElementById('historyBadge').textContent = monthLong;
+  document.getElementById('monthSelect').value = `${y}-${m}`;
+
+  // Hitung upah
+  let farhanUpah=0,zakaUpah=0;
+  let daysInMonth = 0;
+  cached.parsedUpah.forEach(({d,r})=>{if(d>=startDate&&d<=endDate){farhanUpah+=num(r[5]);zakaUpah+=num(r[11]);daysInMonth++}});
+
+  let history=[];let farhanAmbil=0,zakaAmbil=0;
+  cached.fixRows.forEach(r=>{
+    const d=parseDateFlexible(r[0]);if(!d)return;if(d<startDate||d>endDate)return;
+    const rowText=r.join(' ').toLowerCase();if(!containsAmbilUang(rowText))return;
+    const isFarhan=rowText.includes('farhan');const isZaka=rowText.includes('zaka');if(!isFarhan&&!isZaka)return;
+    let nominal=num(r[12]||0);if(nominal===0)nominal=num(r[11]||0);
+    if(nominal===0){let max=0;r.forEach(c=>{const n=num(c);if(n>1000&&n>max)max=n});nominal=max}
+    if(nominal===0)return;
+    history.push({d,karyawan:isFarhan?'farhan':'zaka',nominal});
+    if(isFarhan)farhanAmbil+=nominal;if(isZaka)zakaAmbil+=nominal
+  });
+  history.sort((a,b)=>b.d-a.d);
+  const farhanSisa=farhanUpah-farhanAmbil;const zakaSisa=zakaUpah-zakaAmbil;
+
+  document.getElementById('farhanUpah').textContent=rupiah(farhanUpah);
+  document.getElementById('farhanUpah2').textContent=rupiah(farhanUpah);
+  document.getElementById('farhanUpahSub').textContent=`${daysInMonth} hari kerja`;
+  document.getElementById('zakaUpah').textContent=rupiah(zakaUpah);
+  document.getElementById('zakaUpah2').textContent=rupiah(zakaUpah);
+  document.getElementById('zakaUpahSub').textContent=`${daysInMonth} hari kerja`;
+  document.getElementById('farhanAmbil').textContent=rupiah(farhanAmbil);
+  document.getElementById('farhanAmbil2').textContent=rupiah(farhanAmbil);
+  document.getElementById('zakaAmbil').textContent=rupiah(zakaAmbil);
+  document.getElementById('zakaAmbil2').textContent=rupiah(zakaAmbil);
+  document.getElementById('farhanSisa').textContent=rupiah(farhanSisa);
+  document.getElementById('farhanSisa2').textContent=rupiah(farhanSisa);
+  document.getElementById('zakaSisa').textContent=rupiah(zakaSisa);
+  document.getElementById('zakaSisa2').textContent=rupiah(zakaSisa);
+
+  let htmlHist='';history.slice(0,100).forEach(h=>{const isFarhan=h.karyawan==='farhan';htmlHist+=`<tr><td>${h.d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'})}</td><td><span class="pill ${isFarhan?'pill-green':'pill-red'}">${isFarhan?'Farhan':'Zaka'}</span></td><td style="font-weight:800;color:#dc2626">${rupiah(h.nominal)}</td></tr>`});
+  document.getElementById('history').innerHTML=htmlHist||'<tr><td colspan="3" style="text-align:center;padding:20px">Tidak ada data di bulan ini</td></tr>';
+
+  // Prev/Next disabled logic
+  const idx = cached.months.findIndex(mm=>mm.y===y && mm.m===m);
+  document.getElementById('prevBtn').disabled = idx<=0;
+  document.getElementById('nextBtn').disabled = idx>=cached.months.length-1;
+}
+
+function changeMonth(delta){
+  const idx = cached.months.findIndex(mm=>mm.y===currentYear && mm.m===currentMonth);
+  const newIdx = idx + delta;
+  if(newIdx<0||newIdx>=cached.months.length) return;
+  const {y,m}=cached.months[newIdx];
+  renderMonth(y,m);
+}
+function onSelectMonth(){
+  const v=document.getElementById('monthSelect').value;
+  if(!v) return;
+  const [y,m]=v.split('-').map(Number);
+  renderMonth(y,m);
+}
+
+fetchAll();
 </script>
-</body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
