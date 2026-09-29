@@ -24,7 +24,7 @@
 </style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dashboard Upah - V2 Export & Tahunan</title>
+<title>Dashboard Upah V3 - WA Auto</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -37,26 +37,23 @@ body{background:#eef0ff;color:#1e293b;min-height:100vh}
 .card{background:white;border-radius:18px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,.06);border:1px solid #e8eaff;margin-bottom:14px}
 .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
 .card-head h3{font-family:'Poppins';font-size:13px;font-weight:700}
-.badge{font-size:10px;padding:5px 10px;border-radius:20px;font-weight:800;background:#e0e7ff;color:#1e40af}
-.badge-green{background:#dcfce7;color:#166534}
+.badge{font-size:10px;padding:5px 10px;border-radius:20px;font-weight:800;background:#e0e7ff;color:#1e40af}.badge-green{background:#dcfce7;color:#166534}
 .month-nav{background:white;border-radius:18px;padding:14px 16px;box-shadow:0 6px 18px rgba(0,0,0,.06);border:1px solid #e8eaff;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .month-nav .nav-btn{width:44px;height:44px;border:none;border-radius:12px;background:#0b63f0;color:white;font-size:20px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .month-nav .nav-btn:disabled{opacity:.35;cursor:not-allowed}
 .month-center{flex:1;text-align:center}.month-center b{font-family:'Poppins';font-size:16px;font-weight:800;display:block;color:#0f172a}.month-center small{font-size:11px;color:#64748b}
 .month-select{width:100%;margin-top:8px;padding:10px 12px;border-radius:10px;border:1px solid #e2e8f0;background:#f8fafc;font-size:12px;font-weight:700;color:#0f172a}
-.action-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
-.action-btn{padding:10px;border:none;border-radius:12px;font-weight:800;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
-.action-btn.primary{background:#0b63f0;color:white}.action-btn.dark{background:#0f172a;color:white}.action-btn.white{background:white;border:1px solid #e2e8f0;color:#0f172a}
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.action-row.triple{grid-template-columns:1fr 1fr 1fr}
+.action-btn{padding:11px;border:none;border-radius:12px;font-weight:800;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.action-btn.primary{background:#0b63f0;color:white}.action-btn.dark{background:#0f172a;color:white}.action-btn.white{background:white;border:1px solid #e2e8f0;color:#0f172a}.action-btn.wa{background:#25D366;color:white}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .mini-card{background:white;border-radius:16px;padding:14px;position:relative;overflow:hidden;border:1px solid #eef0ff;box-shadow:0 4px 12px rgba(0,0,0,.04)}
 .mini-card .circle{position:absolute;right:-10px;top:-10px;width:56px;height:56px;border-radius:50%;opacity:.18}
 .mini-card .label{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase}.mini-card .value{font-family:'Poppins';font-size:18px;font-weight:800;margin:4px 0 2px}
-.mini-card.blue .circle{background:#60a5fa}.mini-card.blue .value{color:#2563eb}
-.mini-card.green .circle{background:#4ade80}.mini-card.green .value{color:#16a34a}
-.mini-card.purple .circle{background:#a78bfa}.mini-card.purple .value{color:#7c3aed}
-.mini-card.red .circle{background:#f87171}.mini-card.red .value{color:#dc2626}
-.mini-card.orange .circle{background:#fb923c}.mini-card.orange .value{color:#ea580c}
-.mini-card.dark .circle{background:#94a3b8}.mini-card.dark .value{color:#0f172a}
+.mini-card.blue .circle{background:#60a5fa}.mini-card.blue .value{color:#2563eb}.mini-card.green .circle{background:#4ade80}.mini-card.green .value{color:#16a34a}
+.mini-card.purple .circle{background:#a78bfa}.mini-card.purple .value{color:#7c3aed}.mini-card.red .circle{background:#f87171}.mini-card.red .value{color:#dc2626}
+.mini-card.orange .circle{background:#fb923c}.mini-card.orange .value{color:#ea580c}.mini-card.dark .circle{background:#94a3b8}.mini-card.dark .value{color:#0f172a}
 .karyawan-card{border-left:5px solid #0b63f0}.karyawan-card.zaka{border-left-color:#8b5cf6}
 .karyawan-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .avatar{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:white}
@@ -68,16 +65,11 @@ body{background:#eef0ff;color:#1e293b;min-height:100vh}
 table{width:100%;border-collapse:collapse;margin-top:8px}th{background:#0b63f0;color:white;padding:10px 8px;font-size:11px;text-align:left}td{padding:9px 8px;border-bottom:1px solid #f1f5f9;font-size:11px}
 .pill{display:inline-block;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800}.pill-green{background:#dcfce7;color:#166534}.pill-red{background:#fee2e2;color:#991b1b}
 .year-select{padding:8px 10px;border-radius:10px;border:1px solid #e2e8f0;background:#f8fafc;font-size:11px;font-weight:700}
-.annual-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
-@media(min-width:600px){.annual-grid{grid-template-columns:1fr 1fr}}
-.annual-month{background:#f8fafc;border-radius:12px;padding:12px;border:1px solid #eef0ff}
-.annual-month b{font-size:12px;display:block;margin-bottom:6px}
-.annual-month small{font-size:10px;color:#64748b}
-#debug{font-size:10px;color:#64748b;margin-top:8px}
+.code-box{background:#0f172a;color:#e2e8f0;padding:12px;border-radius:12px;font-size:10px;overflow:auto;white-space:pre-wrap;margin-top:8px;font-family:monospace}
 </style>
 </head>
 <body>
-<div class="header"><div class="menu">☰</div><div class="title"><b>🏪 KONTER A YUDI THEA</b><small>Dashboard V2 - Export & Tahunan</small></div><div style="width:36px"></div></div>
+<div class="header"><div class="menu">☰</div><div class="title"><b>🏪 KONTER A YUDI THEA</b><small>Dashboard V3 - WA Otomatis</small></div><div style="width:36px"></div></div>
 <div class="container">
 
 <div class="month-nav">
@@ -91,9 +83,13 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th{background:#0b63f0;c
 </div>
 
 <div class="action-row">
-  <button class="action-btn primary" onclick="exportMonthPDF()">📄 PDF Bulan</button>
+  <button class="action-btn wa" onclick="sendWAFarhan()">💬 WA Farhan</button>
+  <button class="action-btn wa" style="background:#128C7E" onclick="sendWAZaka()">💬 WA Zaka</button>
+</div>
+<div class="action-row triple">
+  <button class="action-btn primary" onclick="exportMonthPDF()">📄 PDF</button>
   <button class="action-btn dark" onclick="toggleAnnual()">📅 Tahunan</button>
-  <button class="action-btn white" onclick="exportMonthExcel()">📊 Excel Bulan</button>
+  <button class="action-btn white" onclick="exportMonthExcel()">📊 Excel</button>
 </div>
 
 <div class="card">
@@ -113,6 +109,7 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th{background:#0b63f0;c
   <div class="row"><div class="label">Total Upah</div><div class="value" style="color:#2563eb" id="farhanUpah2">Rp0</div></div>
   <div class="row"><div class="label">Pengambilan</div><div class="value" style="color:#dc2626" id="farhanAmbil2">Rp0</div></div>
   <div class="sisa-box"><div class="label" style="font-weight:800">Sisa Bersih</div><b class="value" style="color:#16a34a;font-size:20px" id="farhanSisa2">Rp0</b></div>
+  <button class="btn" style="background:#25D366" onclick="sendWAFarhan()">Kirim WA ke Farhan</button>
 </div>
 
 <div class="card karyawan-card zaka">
@@ -120,37 +117,89 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th{background:#0b63f0;c
   <div class="row"><div class="label">Total Upah</div><div class="value" style="color:#7c3aed" id="zakaUpah2">Rp0</div></div>
   <div class="row"><div class="label">Pengambilan</div><div class="value" style="color:#dc2626" id="zakaAmbil2">Rp0</div></div>
   <div class="sisa-box"><div class="label" style="font-weight:800">Sisa Bersih</div><b class="value" style="color:#16a34a;font-size:20px" id="zakaSisa2">Rp0</b></div>
+  <button class="btn" style="background:#128C7E" onclick="sendWAZaka()">Kirim WA ke Zaka</button>
 </div>
 
-<!-- REKAP TAHUNAN -->
 <div class="card" id="annualCard" style="display:none">
-  <div class="card-head">
-    <h3>📅 Rekap Tahunan <span id="annualYearLabel"></span></h3>
-    <div style="display:flex;gap:6px;align-items:center">
-      <select class="year-select" id="yearSelect" onchange="renderAnnual(parseInt(this.value))"></select>
-      <button class="action-btn primary" style="padding:8px 10px;font-size:10px;width:auto;margin:0" onclick="exportAnnualPDF()">PDF Tahun</button>
-    </div>
+  <div class="card-head"><h3>📅 Rekap Tahunan <span id="annualYearLabel"></span></h3>
+    <div style="display:flex;gap:6px;align-items:center"><select class="year-select" id="yearSelect" onchange="renderAnnual(parseInt(this.value))"></select><button class="action-btn primary" style="padding:8px 10px;font-size:10px;width:auto;margin:0" onclick="exportAnnualPDF()">PDF Tahun</button></div>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
-    <div class="mini-card blue"><div class="label">Total Setahun Farhan</div><div class="value" style="font-size:14px" id="yFarhanUpah">Rp0</div></div>
-    <div class="mini-card red"><div class="label">Total Ambil Farhan</div><div class="value" style="font-size:14px" id="yFarhanAmbil">Rp0</div></div>
-    <div class="mini-card green"><div class="label">Sisa Farhan</div><div class="value" style="font-size:14px" id="yFarhanSisa">Rp0</div></div>
-    <div class="mini-card purple"><div class="label">Total Setahun Zaka</div><div class="value" style="font-size:14px" id="yZakaUpah">Rp0</div></div>
-    <div class="mini-card orange"><div class="label">Total Ambil Zaka</div><div class="value" style="font-size:14px" id="yZakaAmbil">Rp0</div></div>
-    <div class="mini-card dark"><div class="label">Sisa Zaka</div><div class="value" style="font-size:14px" id="yZakaSisa">Rp0</div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+    <div class="mini-card blue"><div class="label">Total Setahun Farhan</div><div class="value" style="font-size:13px" id="yFarhanUpah">Rp0</div></div>
+    <div class="mini-card purple"><div class="label">Total Setahun Zaka</div><div class="value" style="font-size:13px" id="yZakaUpah">Rp0</div></div>
   </div>
-  <div style="overflow:auto;border-radius:12px;border:1px solid #eef0ff">
-    <table><thead><tr><th>Bulan</th><th>Farhan Upah</th><th>Farhan Ambil</th><th>Zaka Upah</th><th>Zaka Ambil</th></tr></thead><tbody id="annualTable"></tbody></table>
-  </div>
+  <div style="overflow:auto;border-radius:12px;border:1px solid #eef0ff"><table><thead><tr><th>Bulan</th><th>Farhan Upah</th><th>Farhan Ambil</th><th>Zaka Upah</th><th>Zaka Ambil</th></tr></thead><tbody id="annualTable"></tbody></table></div>
 </div>
 
 <div class="card">
   <div class="card-head"><h3>📜 Riwayat Pengambilan</h3><span class="badge" style="background:#dbeafe;color:#1e40af" id="historyBadge">Bulan Ini</span></div>
-  <div style="max-height:420px;overflow:auto;border-radius:12px;border:1px solid #eef0ff">
-    <table><thead><tr><th>Tanggal</th><th>Nama</th><th>Nominal</th></tr></thead><tbody id="history"><tr><td colspan="3" style="text-align:center;padding:20px;color:#0b63f0;font-weight:700">Memuat...</td></tr></tbody></table>
-  </div>
+  <div style="max-height:420px;overflow:auto;border-radius:12px;border:1px solid #eef0ff"><table><thead><tr><th>Tanggal</th><th>Nama</th><th>Nominal</th></tr></thead><tbody id="history"><tr><td colspan="3" style="text-align:center;padding:20px;color:#0b63f0;font-weight:700">Memuat...</td></tr></tbody></table></div>
   <button class="btn" onclick="fetchAll()">🔄 Refresh Data</button>
-  <div id="debug"></div>
+</div>
+
+<div class="card" style="border:2px dashed #0b63f0">
+  <div class="card-head"><h3>🤖 Setting Auto Kirim WA Bulanan</h3><span class="badge badge-green">BARU</span></div>
+  <p style="font-size:12px;line-height:1.5;color:#475569">Biar nggak manual, pasang script ini di Google Sheet kamu. Nanti tiap tanggal 1 jam 08:00 WIB otomatis kirim WA ke Farhan & Zaka via Fonnte/Wablas.</p>
+  <ol style="font-size:11px;margin:10px 0 0 18px;line-height:1.6;color:#334155">
+    <li>Buka Sheet kamu → Menu <b>Extensions → Apps Script</b></li>
+    <li>Hapus semua kode, paste kode di bawah</li>
+    <li>Ganti <code>TOKEN_FONNTE</code> dengan token dari fonnte.com (gratis)</li>
+    <li>Klik jam ⏰ Triggers → Add Trigger → Pilih <code>kirimRekapBulanan</code> → Time-driven → Month timer → 1st → 08:00</li>
+    <li>Save. Selesai!</li>
+  </ol>
+  <div class="code-box" id="scriptCode">function kirimRekapBulanan() {
+  const SHEET_ID = "1iPbtRGldW5yz6tuUZ5oHzMGsnNb4cHyCbAEMkq51qK4";
+  const TOKEN_FONNTE = "GANTI_DENGAN_TOKEN_FONNTE_KAMU"; // daftar di fonnte.com
+  
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  const sheetUpah = ss.getSheetByName("UPAH");
+  const sheetFix = ss.getSheetByName("FIX RUMUS1");
+  
+  const now = new Date();
+  const y = now.getMonth() === 0 ? now.getFullYear()-1 : now.getFullYear();
+  const m = now.getMonth() === 0 ? 11 : now.getMonth()-1; // bulan kemarin
+  const start = new Date(y, m, 1);
+  const end = new Date(y, m+1, 0);
+  
+  // Hitung upah - sesuaikan kolom 5 dan 11 seperti dashboard
+  let farhanUpah=0, zakaUpah=0, farhanAmbil=0, zakaAmbil=0;
+  const upahData = sheetUpah.getDataRange().getValues();
+  for(let i=1;i<upahData.length;i++){
+    let d = new Date(upahData[i][0]);
+    if(d>=start && d<=end){
+      farhanUpah += Number(String(upahData[i][5]).replace(/[^0-9]/g,''))||0;
+      zakaUpah += Number(String(upahData[i][11]).replace(/[^0-9]/g,''))||0;
+    }
+  }
+  const fixData = sheetFix.getDataRange().getValues();
+  for(let i=1;i<fixData.length;i++){
+    let d = new Date(fixData[i][0]);
+    if(!(d>=start && d<=end)) continue;
+    let txt = fixData[i].join(' ').toLowerCase();
+    if(!(txt.includes('ambil') && (txt.includes('uang')||txt.includes('unag')))) continue;
+    let nom = Number(String(fixData[i][12]).replace(/[^0-9]/g,''))||Number(String(fixData[i][11]).replace(/[^0-9]/g,''))||0;
+    if(txt.includes('farhan')) farhanAmbil+=nom;
+    if(txt.includes('zaka')) zakaAmbil+=nom;
+  }
+  const bulan = Utilities.formatDate(start, "Asia/Jakarta", "MMMM yyyy");
+  
+  function rupiah(n){return "Rp"+n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,".");}
+  
+  const pesanFarhan = `Halo Farhan 👋%0A%0ARekap upah *${bulan}* Konter A Yudi Thea:%0A%0A📅 Total Upah: ${rupiah(farhanUpah)}%0A💸 Sudah Ambil: ${rupiah(farhanAmbil)}%0A✅ Sisa Bersih: ${rupiah(farhanUpah-farhanAmbil)}%0A%0ATerima kasih 🙏`;
+  const pesanZaka = `Halo Zaka 👋%0A%0ARekap upah *${bulan}* Konter A Yudi Thea:%0A%0A📅 Total Upah: ${rupiah(zakaUpah)}%0A💸 Sudah Ambil: ${rupiah(zakaAmbil)}%0A✅ Sisa Bersih: ${rupiah(zakaUpah-zakaAmbil)}%0A%0ATerima kasih 🙏`;
+  
+  // Kirim via Fonnte
+  function kirimWA(target, message){
+    UrlFetchApp.fetch("https://api.fonnte.com/send", {
+      method:"post",
+      headers:{"Authorization": TOKEN_FONNTE},
+      payload:{target:target, message:decodeURIComponent(message)}
+    });
+  }
+  kirimWA("08131563963", pesanFarhan);
+  kirimWA("083186636396", pesanZaka);
+}</div>
+  <button class="btn btn-secondary" style="background:#0f172a;color:white" onclick="copyScript()">📋 Copy Script</button>
 </div>
 
 </div>
@@ -159,17 +208,14 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th{background:#0b63f0;c
 const SHEET_ID = "1iPbtRGldW5yz6tuUZ5oHzMGsnNb4cHyCbAEMkq51qK4";
 const CSV_UPAH = (t) => `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=UPAH&nocache=${t}`;
 const CSV_FIX  = (t) => `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=FIX%20RUMUS1&nocache=${t}`;
-
 let cached = { parsedUpah: [], fixRows: [], allDates: [], months: [] };
 let currentYear, currentMonth;
-
 function rupiah(n){ return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(n)||0); }
 function parseCSV(text){const rows=[];let row=[];let field='';let inQ=false;for(let i=0;i<text.length;i++){const c=text[i];if(c=='"'){if(inQ&&text[i+1]=='"'){field+='"';i++}else inQ=!inQ}else if(c==','&&!inQ){row.push(field);field=''}else if((c=='\n'||c=='\r')&&!inQ){if(field!==''||row.length>0){row.push(field);rows.push(row);row=[];field=''}if(c=='\r'&&text[i+1]=='\n')i++}else field+=c}if(field!==''||row.length>0){row.push(field);rows.push(row)}return rows}
 function parseDateFlexible(s){if(!s)return null;s=s.toString().trim().replace(/"/g,'');let m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m){return new Date(parseInt(m[3]),parseInt(m[2])-1,parseInt(m[1]))}m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m){return new Date(parseInt(m[1]),parseInt(m[2])-1,parseInt(m[3]))}const d=new Date(s);return isNaN(d)?null:d}
 function num(v){if(v==null)return 0;let s=v.toString().replace(/[^0-9\-]/g,'').trim();if(s===''||s==='-')return 0;const n=Number(s);return isNaN(n)?0:n}
 async function fetchCSV(url){const res=await fetch(url,{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);return parseCSV(await res.text())}
 function containsAmbilUang(text){const s=text.toLowerCase();return s.includes('ambil')&&(s.includes('uang')||s.includes('unag'))}
-
 async function fetchAll(){
   const t=Date.now();
   document.getElementById('history').innerHTML = '<tr><td colspan="3" style="text-align:center;padding:20px;color:#0b63f0;font-weight:700">Memuat...</td></tr>';
@@ -179,36 +225,19 @@ async function fetchAll(){
     const upahRows=rowsUpahRaw.slice(upahHeaderIdx+1);
     let fixHeaderIdx=-1;for(let i=0;i<Math.min(5,rowsFixRaw.length);i++){if(rowsFixRaw[i].join(' ').toLowerCase().includes('karyawan')){fixHeaderIdx=i;break}}if(fixHeaderIdx===-1)fixHeaderIdx=0;
     const fixRows=rowsFixRaw.slice(fixHeaderIdx+1);
-
     let allDates=[];let parsedUpah=[];
     upahRows.forEach(r=>{if(!r||r.length<6)return;const d=parseDateFlexible(r[0]);if(!d)return;if(r.join('').trim()==='')return;parsedUpah.push({d,r});allDates.push(d)});
     fixRows.forEach(r=>{const d=parseDateFlexible(r[0]);if(d)allDates.push(d)});
     if(allDates.length===0)throw new Error('Tidak ada tanggal');
-
-    const monthSet = new Map();
-    allDates.forEach(d=>{const key=`${d.getFullYear()}-${String(d.getMonth()).padStart(2,'0')}`;monthSet.set(key,{y:d.getFullYear(), m:d.getMonth()})});
+    const monthSet = new Map();allDates.forEach(d=>{const key=`${d.getFullYear()}-${String(d.getMonth()).padStart(2,'0')}`;monthSet.set(key,{y:d.getFullYear(), m:d.getMonth()})});
     const months = Array.from(monthSet.values()).sort((a,b)=> a.y!==b.y ? a.y-b.y : a.m-b.m);
     cached = { parsedUpah, fixRows, allDates, months };
-
-    const sel = document.getElementById('monthSelect');
-    sel.innerHTML='';
-    months.forEach(({y,m})=>{const dt=new Date(y,m,1);const label=dt.toLocaleDateString('id-ID',{month:'long', year:'numeric'});const opt=document.createElement('option');opt.value=`${y}-${m}`;opt.textContent=label.charAt(0).toUpperCase()+label.slice(1);sel.appendChild(opt)});
-
-    // year select
-    const years = [...new Set(months.map(x=>x.y))].sort();
-    const ySel=document.getElementById('yearSelect');ySel.innerHTML='';years.forEach(y=>{const o=document.createElement('option');o.value=y;o.textContent=y;ySel.appendChild(o)});
-
-    if(currentYear===undefined){
-      let latestRaw=new Date(Math.max(...allDates.map(d=>d.getTime())));
-      let target;if(latestRaw.getDate()<=3){target=new Date(latestRaw.getFullYear(),latestRaw.getMonth()-1,1)}else{target=new Date(latestRaw.getFullYear(),latestRaw.getMonth(),1)}
-      currentYear=target.getFullYear();currentMonth=target.getMonth();
-    }
-    sel.value=`${currentYear}-${currentMonth}`;
-    ySel.value=currentYear;
-    renderMonth(currentYear,currentMonth);
-  }catch(e){document.getElementById('history').innerHTML=`<tr><td colspan="3" style="color:red">❌ ${e.message}</td></tr>`;document.getElementById('debug').textContent=e.stack||e.message}
+    const sel = document.getElementById('monthSelect');sel.innerHTML='';months.forEach(({y,m})=>{const dt=new Date(y,m,1);const label=dt.toLocaleDateString('id-ID',{month:'long', year:'numeric'});const opt=document.createElement('option');opt.value=`${y}-${m}`;opt.textContent=label.charAt(0).toUpperCase()+label.slice(1);sel.appendChild(opt)});
+    const years = [...new Set(months.map(x=>x.y))].sort();const ySel=document.getElementById('yearSelect');ySel.innerHTML='';years.forEach(y=>{const o=document.createElement('option');o.value=y;o.textContent=y;ySel.appendChild(o)});
+    if(currentYear===undefined){let latestRaw=new Date(Math.max(...allDates.map(d=>d.getTime())));let target;if(latestRaw.getDate()<=3){target=new Date(latestRaw.getFullYear(),latestRaw.getMonth()-1,1)}else{target=new Date(latestRaw.getFullYear(),latestRaw.getMonth(),1)}currentYear=target.getFullYear();currentMonth=target.getMonth();}
+    sel.value=`${currentYear}-${currentMonth}`;ySel.value=currentYear;renderMonth(currentYear,currentMonth);
+  }catch(e){document.getElementById('history').innerHTML=`<tr><td colspan="3" style="color:red">❌ ${e.message}</td></tr>`}
 }
-
 function calcMonth(y,m){
   const start=new Date(y,m,1), end=new Date(y,m+1,0);
   let farhanUpah=0,zakaUpah=0,days=0;
@@ -217,7 +246,6 @@ function calcMonth(y,m){
   cached.fixRows.forEach(r=>{const d=parseDateFlexible(r[0]);if(!d||d<start||d>end)return;const rowText=r.join(' ').toLowerCase();if(!containsAmbilUang(rowText))return;const isFarhan=rowText.includes('farhan');const isZaka=rowText.includes('zaka');if(!isFarhan&&!isZaka)return;let nominal=num(r[12]||0);if(nominal===0)nominal=num(r[11]||0);if(nominal===0){let max=0;r.forEach(c=>{const n=num(c);if(n>1000&&n>max)max=n});nominal=max}if(nominal===0)return;if(isFarhan)farhanAmbil+=nominal;if(isZaka)zakaAmbil+=nominal});
   return {farhanUpah,zakaUpah,farhanAmbil,zakaAmbil,farhanSisa:farhanUpah-farhanAmbil,zakaSisa:zakaUpah-zakaAmbil,days,start,end}
 }
-
 function renderMonth(y,m){
   currentYear=y;currentMonth=m;
   const {farhanUpah,zakaUpah,farhanAmbil,zakaAmbil,farhanSisa,zakaSisa,days,start,end}=calcMonth(y,m);
@@ -227,7 +255,6 @@ function renderMonth(y,m){
   document.getElementById('badgePeriode').textContent=`1 - ${end.getDate()} ${end.toLocaleDateString('id-ID',{month:'short'})}`;
   document.getElementById('historyBadge').textContent=monthLong;
   document.getElementById('monthSelect').value=`${y}-${m}`;
-
   document.getElementById('farhanUpah').textContent=rupiah(farhanUpah);document.getElementById('farhanUpah2').textContent=rupiah(farhanUpah);
   document.getElementById('farhanUpahSub').textContent=`${days} hari kerja`;
   document.getElementById('zakaUpah').textContent=rupiah(zakaUpah);document.getElementById('zakaUpah2').textContent=rupiah(zakaUpah);
@@ -236,85 +263,38 @@ function renderMonth(y,m){
   document.getElementById('zakaAmbil').textContent=rupiah(zakaAmbil);document.getElementById('zakaAmbil2').textContent=rupiah(zakaAmbil);
   document.getElementById('farhanSisa').textContent=rupiah(farhanSisa);document.getElementById('farhanSisa2').textContent=rupiah(farhanSisa);
   document.getElementById('zakaSisa').textContent=rupiah(zakaSisa);document.getElementById('zakaSisa2').textContent=rupiah(zakaSisa);
-
-  // history
   let history=[];cached.fixRows.forEach(r=>{const d=parseDateFlexible(r[0]);if(!d||d<start||d>end)return;const rowText=r.join(' ').toLowerCase();if(!containsAmbilUang(rowText))return;const isFarhan=rowText.includes('farhan');const isZaka=rowText.includes('zaka');if(!isFarhan&&!isZaka)return;let nominal=num(r[12]||0);if(nominal===0)nominal=num(r[11]||0);if(nominal===0){let max=0;r.forEach(c=>{const n=num(c);if(n>1000&&n>max)max=n});nominal=max}if(nominal===0)return;history.push({d,karyawan:isFarhan?'farhan':'zaka',nominal})});
   history.sort((a,b)=>b.d-a.d);
   let htmlHist='';history.slice(0,100).forEach(h=>{const isFarhan=h.karyawan==='farhan';htmlHist+=`<tr><td>${h.d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'})}</td><td><span class="pill ${isFarhan?'pill-green':'pill-red'}">${isFarhan?'Farhan':'Zaka'}</span></td><td style="font-weight:800;color:#dc2626">${rupiah(h.nominal)}</td></tr>`});
   document.getElementById('history').innerHTML=htmlHist||'<tr><td colspan="3" style="text-align:center;padding:20px">Tidak ada data di bulan ini</td></tr>';
-
   const idx=cached.months.findIndex(mm=>mm.y===y&&mm.m===m);
-  document.getElementById('prevBtn').disabled=idx<=0;
-  document.getElementById('nextBtn').disabled=idx>=cached.months.length-1;
-
+  document.getElementById('prevBtn').disabled=idx<=0;document.getElementById('nextBtn').disabled=idx>=cached.months.length-1;
   if(document.getElementById('annualCard').style.display!=='none'){renderAnnual(y)}
 }
-
 function changeMonth(delta){const idx=cached.months.findIndex(mm=>mm.y===currentYear&&mm.m===currentMonth);const newIdx=idx+delta;if(newIdx<0||newIdx>=cached.months.length)return;const {y,m}=cached.months[newIdx];renderMonth(y,m)}
 function onSelectMonth(){const v=document.getElementById('monthSelect').value;if(!v)return;const [y,m]=v.split('-').map(Number);renderMonth(y,m)}
-
-function toggleAnnual(){
-  const card=document.getElementById('annualCard');
-  if(card.style.display==='none'){card.style.display='block';renderAnnual(currentYear);card.scrollIntoView({behavior:'smooth'})}else{card.style.display='none'}
-}
-
+function toggleAnnual(){const card=document.getElementById('annualCard');if(card.style.display==='none'){card.style.display='block';renderAnnual(currentYear);card.scrollIntoView({behavior:'smooth'})}else{card.style.display='none'}}
 function renderAnnual(year){
-  document.getElementById('annualYearLabel').textContent=year;
-  document.getElementById('yearSelect').value=year;
-  let yFarhanUpah=0,yFarhanAmbil=0,yZakaUpah=0,yZakaAmbil=0;
-  let rows='';
-  for(let m=0;m<12;m++){
-    const data=calcMonth(year,m);
-    if(data.days===0&&data.farhanAmbil===0&&data.zakaAmbil===0) continue;
-    yFarhanUpah+=data.farhanUpah; yFarhanAmbil+=data.farhanAmbil;
-    yZakaUpah+=data.zakaUpah; yZakaAmbil+=data.zakaAmbil;
-    const dt=new Date(year,m,1);
-    rows+=`<tr><td>${dt.toLocaleDateString('id-ID',{month:'short'})}</td><td>${rupiah(data.farhanUpah)}</td><td style="color:#dc2626">${rupiah(data.farhanAmbil)}</td><td>${rupiah(data.zakaUpah)}</td><td style="color:#dc2626">${rupiah(data.zakaAmbil)}</td></tr>`
-  }
-  document.getElementById('yFarhanUpah').textContent=rupiah(yFarhanUpah);
-  document.getElementById('yFarhanAmbil').textContent=rupiah(yFarhanAmbil);
-  document.getElementById('yFarhanSisa').textContent=rupiah(yFarhanUpah-yFarhanAmbil);
-  document.getElementById('yZakaUpah').textContent=rupiah(yZakaUpah);
-  document.getElementById('yZakaAmbil').textContent=rupiah(yZakaAmbil);
-  document.getElementById('yZakaSisa').textContent=rupiah(yZakaUpah-yZakaAmbil);
+  document.getElementById('annualYearLabel').textContent=year;document.getElementById('yearSelect').value=year;
+  let yFarhanUpah=0,yZakaUpah=0;let rows='';
+  for(let m=0;m<12;m++){const data=calcMonth(year,m);if(data.days===0&&data.farhanAmbil===0&&data.zakaAmbil===0) continue;yFarhanUpah+=data.farhanUpah;yZakaUpah+=data.zakaUpah;const dt=new Date(year,m,1);rows+=`<tr><td>${dt.toLocaleDateString('id-ID',{month:'short'})}</td><td>${rupiah(data.farhanUpah)}</td><td style="color:#dc2626">${rupiah(data.farhanAmbil)}</td><td>${rupiah(data.zakaUpah)}</td><td style="color:#dc2626">${rupiah(data.zakaAmbil)}</td></tr>`}
+  document.getElementById('yFarhanUpah').textContent=rupiah(yFarhanUpah);document.getElementById('yZakaUpah').textContent=rupiah(yZakaUpah);
   document.getElementById('annualTable').innerHTML=rows||'<tr><td colspan="5" style="text-align:center;padding:20px">Tidak ada data tahun ini</td></tr>';
 }
-
-// EXPORT
-function exportMonthPDF(){
-  const {farhanUpah,zakaUpah,farhanAmbil,zakaAmbil,farhanSisa,zakaSisa,days,start}=calcMonth(currentYear,currentMonth);
-  const {jsPDF}=window.jspdf;const doc=new jsPDF();
-  doc.setFont('helvetica','bold');doc.setFontSize(14);doc.text('KONTER A YUDI THEA - Rekap Upah',10,15);
-  doc.setFontSize(11);doc.setFont('helvetica','normal');doc.text(`Periode: ${start.toLocaleDateString('id-ID',{month:'long',year:'numeric'})} (${days} hari kerja)`,10,22);
-  doc.setFont('helvetica','bold');doc.text('Farhan (80k/hari):',10,32);doc.setFont('helvetica','normal');
-  doc.text(`Total Upah: ${rupiah(farhanUpah)}`,14,38);doc.text(`Ambil: ${rupiah(farhanAmbil)}`,14,44);doc.text(`Sisa: ${rupiah(farhanSisa)}`,14,50);
-  doc.setFont('helvetica','bold');doc.text('Zaka (115k/hari):',10,60);doc.setFont('helvetica','normal');
-  doc.text(`Total Upah: ${rupiah(zakaUpah)}`,14,66);doc.text(`Ambil: ${rupiah(zakaAmbil)}`,14,72);doc.text(`Sisa: ${rupiah(zakaSisa)}`,14,78);
-  doc.setFontSize(9);doc.text(`Dicetak: ${new Date().toLocaleString('id-ID')}`,10,90);
-  doc.save(`Upah-${start.toLocaleDateString('id-ID',{month:'long',year:'numeric'})}.pdf`);
+function sendWAFarhan(){
+  const {farhanUpah,farhanAmbil,farhanSisa,days,start}=calcMonth(currentYear,currentMonth);
+  const msg=`Halo Farhan 👋\n\nRekap upah *${start.toLocaleDateString('id-ID',{month:'long', year:'numeric'})}* Konter A Yudi Thea:\n\n📅 Hari kerja: ${days} hari\n💰 Total Upah: ${rupiah(farhanUpah)}\n💸 Sudah Ambil: ${rupiah(farhanAmbil)}\n✅ Sisa Bersih: ${rupiah(farhanSisa)}\n\nTerima kasih 🙏`;
+  window.open(`https://wa.me/628131563963?text=${encodeURIComponent(msg)}`,'_blank');
 }
-
-function exportAnnualPDF(){
-  const year=parseInt(document.getElementById('yearSelect').value)||currentYear;
-  const {jsPDF}=window.jspdf;const doc=new jsPDF();
-  doc.setFont('helvetica','bold');doc.setFontSize(14);doc.text(`Rekap Tahunan ${year} - KONTER A YUDI THEA`,10,15);
-  let y=25;doc.setFontSize(10);doc.setFont('helvetica','normal');
-  for(let m=0;m<12;m++){const d=calcMonth(year,m);if(d.days===0&&d.farhanAmbil===0&&d.zakaAmbil===0)continue;const dt=new Date(year,m,1);doc.text(`${dt.toLocaleDateString('id-ID',{month:'short'})}: Farhan ${rupiah(d.farhanUpah)}/${rupiah(d.farhanAmbil)} | Zaka ${rupiah(d.zakaUpah)}/${rupiah(d.zakaAmbil)}`,10,y);y+=6;if(y>280){doc.addPage();y=15}}
-  doc.save(`Rekap-Tahunan-${year}.pdf`);
+function sendWAZaka(){
+  const {zakaUpah,zakaAmbil,zakaSisa,days,start}=calcMonth(currentYear,currentMonth);
+  const msg=`Halo Zaka 👋\n\nRekap upah *${start.toLocaleDateString('id-ID',{month:'long', year:'numeric'})}* Konter A Yudi Thea:\n\n📅 Hari kerja: ${days} hari\n💰 Total Upah: ${rupiah(zakaUpah)}\n💸 Sudah Ambil: ${rupiah(zakaAmbil)}\n✅ Sisa Bersih: ${rupiah(zakaSisa)}\n\nTerima kasih 🙏`;
+  window.open(`https://wa.me/6283186636396?text=${encodeURIComponent(msg)}`,'_blank');
 }
-
-function exportMonthExcel(){
-  const {farhanUpah,zakaUpah,farhanAmbil,zakaAmbil,farhanSisa,zakaSisa,start,end}=calcMonth(currentYear,currentMonth);
-  let csv='Bulan,'+start.toLocaleDateString('id-ID',{month:'long',year:'numeric'})+'\n';
-  csv+='Karyawan,Total Upah,Total Ambil,Sisa\n';
-  csv+=`Farhan,${farhanUpah},${farhanAmbil},${farhanSisa}\n`;
-  csv+=`Zaka,${zakaUpah},${zakaAmbil},${zakaSisa}\n\n`;
-  csv+='Riwayat Pengambilan\nTanggal,Nama,Nominal\n';
-  let history=[];cached.fixRows.forEach(r=>{const d=parseDateFlexible(r[0]);if(!d||d<start||d>end)return;const rowText=r.join(' ').toLowerCase();if(!containsAmbilUang(rowText))return;const isFarhan=rowText.includes('farhan');const isZaka=rowText.includes('zaka');if(!isFarhan&&!isZaka)return;let nominal=num(r[12]||0);if(nominal===0)nominal=num(r[11]||0);if(nominal===0){let max=0;r.forEach(c=>{const n=num(c);if(n>1000&&n>max)max=n});nominal=max}if(nominal===0)return;history.push({d,karyawan:isFarhan?'Farhan':'Zaka',nominal})});
-  history.forEach(h=>{csv+=`${h.d.toLocaleDateString('id-ID')},${h.karyawan},${h.nominal}\n`});
-  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`Upah-${start.toLocaleDateString('id-ID',{month:'short',year:'numeric'})}.csv`;a.click();URL.revokeObjectURL(url);
-}
-
+function exportMonthPDF(){const {farhanUpah,zakaUpah,farhanAmbil,zakaAmbil,farhanSisa,zakaSisa,days,start}=calcMonth(currentYear,currentMonth);const {jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFont('helvetica','bold');doc.setFontSize(14);doc.text('KONTER A YUDI THEA - Rekap Upah',10,15);doc.setFontSize(11);doc.setFont('helvetica','normal');doc.text(`Periode: ${start.toLocaleDateString('id-ID',{month:'long',year:'numeric'})} (${days} hari kerja)`,10,22);doc.setFont('helvetica','bold');doc.text('Farhan (80k/hari):',10,32);doc.setFont('helvetica','normal');doc.text(`Total Upah: ${rupiah(farhanUpah)}`,14,38);doc.text(`Ambil: ${rupiah(farhanAmbil)}`,14,44);doc.text(`Sisa: ${rupiah(farhanSisa)}`,14,50);doc.setFont('helvetica','bold');doc.text('Zaka (115k/hari):',10,60);doc.setFont('helvetica','normal');doc.text(`Total Upah: ${rupiah(zakaUpah)}`,14,66);doc.text(`Ambil: ${rupiah(zakaAmbil)}`,14,72);doc.text(`Sisa: ${rupiah(zakaSisa)}`,14,78);doc.setFontSize(9);doc.text(`Dicetak: ${new Date().toLocaleString('id-ID')}`,10,90);doc.save(`Upah-${start.toLocaleDateString('id-ID',{month:'long',year:'numeric'})}.pdf`);}
+function exportAnnualPDF(){const year=parseInt(document.getElementById('yearSelect').value)||currentYear;const {jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFont('helvetica','bold');doc.setFontSize(14);doc.text(`Rekap Tahunan ${year} - KONTER A YUDI THEA`,10,15);let y=25;doc.setFontSize(10);doc.setFont('helvetica','normal');for(let m=0;m<12;m++){const d=calcMonth(year,m);if(d.days===0&&d.farhanAmbil===0&&d.zakaAmbil===0)continue;const dt=new Date(year,m,1);doc.text(`${dt.toLocaleDateString('id-ID',{month:'short'})}: Farhan ${rupiah(d.farhanUpah)}/${rupiah(d.farhanAmbil)} | Zaka ${rupiah(d.zakaUpah)}/${rupiah(d.zakaAmbil)}`,10,y);y+=6;if(y>280){doc.addPage();y=15}}doc.save(`Rekap-Tahunan-${year}.pdf`);}
+function exportMonthExcel(){const {farhanUpah,zakaUpah,farhanAmbil,zakaAmbil,farhanSisa,zakaSisa,start,end}=calcMonth(currentYear,currentMonth);let csv='Bulan,'+start.toLocaleDateString('id-ID',{month:'long',year:'numeric'})+'\n';csv+='Karyawan,Total Upah,Total Ambil,Sisa\n';csv+=`Farhan,${farhanUpah},${farhanAmbil},${farhanSisa}\n`;csv+=`Zaka,${zakaUpah},${zakaAmbil},${zakaSisa}\n\n`;csv+='Riwayat Pengambilan\nTanggal,Nama,Nominal\n';let history=[];cached.fixRows.forEach(r=>{const d=parseDateFlexible(r[0]);if(!d||d<start||d>end)return;const rowText=r.join(' ').toLowerCase();if(!containsAmbilUang(rowText))return;const isFarhan=rowText.includes('farhan');const isZaka=rowText.includes('zaka');if(!isFarhan&&!isZaka)return;let nominal=num(r[12]||0);if(nominal===0)nominal=num(r[11]||0);if(nominal===0){let max=0;r.forEach(c=>{const n=num(c);if(n>1000&&n>max)max=n});nominal=max}if(nominal===0)return;history.push({d,karyawan:isFarhan?'Farhan':'Zaka',nominal})});history.forEach(h=>{csv+=`${h.d.toLocaleDateString('id-ID')},${h.karyawan},${h.nominal}\n`});const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`Upah-${start.toLocaleDateString('id-ID',{month:'short',year:'numeric'})}.csv`;a.click();URL.revokeObjectURL(url);}
+function copyScript(){navigator.clipboard.writeText(document.getElementById('scriptCode').textContent);alert('Script dicopy! Paste di Apps Script ya');}
 fetchAll();
 </script>
 <script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
