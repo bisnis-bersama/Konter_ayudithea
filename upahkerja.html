@@ -96,11 +96,11 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th{background:#0b63f0;c
   <div class="card-head"><h3>📊 Ringkasan Upah</h3><span class="badge" id="badgePeriode">1 - 31</span></div>
   <div class="grid2">
     <div class="mini-card blue"><div class="circle"></div><div class="label">Total Upah Farhan</div><div class="value" id="farhanUpah">Rp0</div><div class="label" id="farhanUpahSub" style="text-transform:none">-</div></div>
-    <div class="mini-card purple"><div class="circle"></div><div class="label">Total Upah Zaka</div><div class="value" id="zakaUpah">Rp0</div><div class="label" id="zakaUpahSub" style="text-transform:none">-</div></div>
+    <div class="mini-card purple"><div class="circle"></div><div class="label">Total Upah jhilun</div><div class="value" id="jhilunUpah">Rp0</div><div class="label" id="jhilunUpahSub" style="text-transform:none">-</div></div>
     <div class="mini-card red"><div class="circle"></div><div class="label">Ambil Farhan</div><div class="value" id="farhanAmbil">Rp0</div></div>
-    <div class="mini-card orange"><div class="circle"></div><div class="label">Ambil Zaka</div><div class="value" id="zakaAmbil">Rp0</div></div>
+    <div class="mini-card orange"><div class="circle"></div><div class="label">Ambil jhilun</div><div class="value" id="jhilunAmbil">Rp0</div></div>
     <div class="mini-card green"><div class="circle"></div><div class="label">Sisa Farhan</div><div class="value" id="farhanSisa">Rp0</div></div>
-    <div class="mini-card dark"><div class="circle"></div><div class="label">Sisa Zaka</div><div class="value" id="zakaSisa">Rp0</div></div>
+    <div class="mini-card dark"><div class="circle"></div><div class="label">Sisa jhilun</div><div class="value" id="jhilunSisa">Rp0</div></div>
   </div>
 </div>
 
@@ -112,12 +112,12 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th{background:#0b63f0;c
   <button class="btn" style="background:#25D366" onclick="sendWAFarhan()">Kirim WA ke Farhan</button>
 </div>
 
-<div class="card karyawan-card zaka">
-  <div class="karyawan-header"><div class="avatar zaka">Z</div><div class="karyawan-info"><b>Zaka</b><small>0831-8663-6396 • 115k/hari</small></div><span class="badge badge-green" style="margin-left:auto">Aktif</span></div>
-  <div class="row"><div class="label">Total Upah</div><div class="value" style="color:#7c3aed" id="zakaUpah2">Rp0</div></div>
-  <div class="row"><div class="label">Pengambilan</div><div class="value" style="color:#dc2626" id="zakaAmbil2">Rp0</div></div>
-  <div class="sisa-box"><div class="label" style="font-weight:800">Sisa Bersih</div><b class="value" style="color:#16a34a;font-size:20px" id="zakaSisa2">Rp0</b></div>
-  <button class="btn" style="background:#128C7E" onclick="sendWAZaka()">Kirim WA ke Zaka</button>
+<div class="card karyawan-card jhilun">
+  <div class="karyawan-header"><div class="avatar jhilun">Z</div><div class="karyawan-info"><b>jhilun</b><small>0821-1970-1272 • 115k/hari</small></div><span class="badge badge-green" style="margin-left:auto">Aktif</span></div>
+  <div class="row"><div class="label">Total Upah</div><div class="value" style="color:#7c3aed" id="jhilunUpah2">Rp0</div></div>
+  <div class="row"><div class="label">Pengambilan</div><div class="value" style="color:#dc2626" id="jhilunAmbil2">Rp0</div></div>
+  <div class="sisa-box"><div class="label" style="font-weight:800">Sisa Bersih</div><b class="value" style="color:#16a34a;font-size:20px" id="jhilunSisa2">Rp0</b></div>
+  <button class="btn" style="background:#128C7E" onclick="sendWAjhilun()">Kirim WA ke jhilun</button>
 </div>
 
 <div class="card" id="annualCard" style="display:none">
@@ -126,9 +126,9 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th{background:#0b63f0;c
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
     <div class="mini-card blue"><div class="label">Total Setahun Farhan</div><div class="value" style="font-size:13px" id="yFarhanUpah">Rp0</div></div>
-    <div class="mini-card purple"><div class="label">Total Setahun Zaka</div><div class="value" style="font-size:13px" id="yZakaUpah">Rp0</div></div>
+    <div class="mini-card purple"><div class="label">Total Setahun jhilun</div><div class="value" style="font-size:13px" id="yjhilunUpah">Rp0</div></div>
   </div>
-  <div style="overflow:auto;border-radius:12px;border:1px solid #eef0ff"><table><thead><tr><th>Bulan</th><th>Farhan Upah</th><th>Farhan Ambil</th><th>Zaka Upah</th><th>Zaka Ambil</th></tr></thead><tbody id="annualTable"></tbody></table></div>
+  <div style="overflow:auto;border-radius:12px;border:1px solid #eef0ff"><table><thead><tr><th>Bulan</th><th>Farhan Upah</th><th>Farhan Ambil</th><th>jhilun Upah</th><th>jhilun Ambil</th></tr></thead><tbody id="annualTable"></tbody></table></div>
 </div>
 
 <div class="card">
@@ -139,7 +139,7 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th{background:#0b63f0;c
 
 <div class="card" style="border:2px dashed #0b63f0">
   <div class="card-head"><h3>🤖 Setting Auto Kirim WA Bulanan</h3><span class="badge badge-green">BARU</span></div>
-  <p style="font-size:12px;line-height:1.5;color:#475569">Biar nggak manual, pasang script ini di Google Sheet kamu. Nanti tiap tanggal 1 jam 08:00 WIB otomatis kirim WA ke Farhan & Zaka via Fonnte/Wablas.</p>
+  <p style="font-size:12px;line-height:1.5;color:#475569">Biar nggak manual, pasang script ini di Google Sheet kamu. Nanti tiap tanggal 1 jam 08:00 WIB otomatis kirim WA ke Farhan & jhilun via Fonnte/Wablas.</p>
   <ol style="font-size:11px;margin:10px 0 0 18px;line-height:1.6;color:#334155">
     <li>Buka Sheet kamu → Menu <b>Extensions → Apps Script</b></li>
     <li>Hapus semua kode, paste kode di bawah</li>
@@ -162,13 +162,13 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th{background:#0b63f0;c
   const end = new Date(y, m+1, 0);
   
   // Hitung upah - sesuaikan kolom 5 dan 11 seperti dashboard
-  let farhanUpah=0, zakaUpah=0, farhanAmbil=0, zakaAmbil=0;
+  let farhanUpah=0, jhilunUpah=0, farhanAmbil=0, jhilunAmbil=0;
   const upahData = sheetUpah.getDataRange().getValues();
   for(let i=1;i<upahData.length;i++){
     let d = new Date(upahData[i][0]);
     if(d>=start && d<=end){
       farhanUpah += Number(String(upahData[i][5]).replace(/[^0-9]/g,''))||0;
-      zakaUpah += Number(String(upahData[i][11]).replace(/[^0-9]/g,''))||0;
+      jhilunUpah += Number(String(upahData[i][11]).replace(/[^0-9]/g,''))||0;
     }
   }
   const fixData = sheetFix.getDataRange().getValues();
@@ -179,14 +179,14 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th{background:#0b63f0;c
     if(!(txt.includes('ambil') && (txt.includes('uang')||txt.includes('unag')))) continue;
     let nom = Number(String(fixData[i][12]).replace(/[^0-9]/g,''))||Number(String(fixData[i][11]).replace(/[^0-9]/g,''))||0;
     if(txt.includes('farhan')) farhanAmbil+=nom;
-    if(txt.includes('zaka')) zakaAmbil+=nom;
+    if(txt.includes('jhilun')) jhilunAmbil+=nom;
   }
   const bulan = Utilities.formatDate(start, "Asia/Jakarta", "MMMM yyyy");
   
   function rupiah(n){return "Rp"+n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,".");}
   
   const pesanFarhan = `Halo Farhan 👋%0A%0ARekap upah *${bulan}* Konter A Yudi Thea:%0A%0A📅 Total Upah: ${rupiah(farhanUpah)}%0A💸 Sudah Ambil: ${rupiah(farhanAmbil)}%0A✅ Sisa Bersih: ${rupiah(farhanUpah-farhanAmbil)}%0A%0ATerima kasih 🙏`;
-  const pesanZaka = `Halo Zaka 👋%0A%0ARekap upah *${bulan}* Konter A Yudi Thea:%0A%0A📅 Total Upah: ${rupiah(zakaUpah)}%0A💸 Sudah Ambil: ${rupiah(zakaAmbil)}%0A✅ Sisa Bersih: ${rupiah(zakaUpah-zakaAmbil)}%0A%0ATerima kasih 🙏`;
+  const pesanjhilun = `Halo jhilun 👋%0A%0ARekap upah *${bulan}* Konter A Yudi Thea:%0A%0A📅 Total Upah: ${rupiah(jhilunUpah)}%0A💸 Sudah Ambil: ${rupiah(jhilunAmbil)}%0A✅ Sisa Bersih: ${rupiah(jhilunUpah-jhilunAmbil)}%0A%0ATerima kasih 🙏`;
   
   // Kirim via Fonnte
   function kirimWA(target, message){
@@ -197,7 +197,7 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th{background:#0b63f0;c
     });
   }
   kirimWA("08131563963", pesanFarhan);
-  kirimWA("083186636396", pesanZaka);
+  kirimWA("083186636396", pesanjhilun);
 }</div>
   <button class="btn btn-secondary" style="background:#0f172a;color:white" onclick="copyScript()">📋 Copy Script</button>
 </div>
@@ -240,11 +240,11 @@ async function fetchAll(){
 }
 function calcMonth(y,m){
   const start=new Date(y,m,1), end=new Date(y,m+1,0);
-  let farhanUpah=0,zakaUpah=0,days=0;
-  cached.parsedUpah.forEach(({d,r})=>{if(d>=start&&d<=end){farhanUpah+=num(r[5]);zakaUpah+=num(r[11]);days++}});
-  let farhanAmbil=0,zakaAmbil=0;
-  cached.fixRows.forEach(r=>{const d=parseDateFlexible(r[0]);if(!d||d<start||d>end)return;const rowText=r.join(' ').toLowerCase();if(!containsAmbilUang(rowText))return;const isFarhan=rowText.includes('farhan');const isZaka=rowText.includes('zaka');if(!isFarhan&&!isZaka)return;let nominal=num(r[12]||0);if(nominal===0)nominal=num(r[11]||0);if(nominal===0){let max=0;r.forEach(c=>{const n=num(c);if(n>1000&&n>max)max=n});nominal=max}if(nominal===0)return;if(isFarhan)farhanAmbil+=nominal;if(isZaka)zakaAmbil+=nominal});
-  return {farhanUpah,zakaUpah,farhanAmbil,zakaAmbil,farhanSisa:farhanUpah-farhanAmbil,zakaSisa:zakaUpah-zakaAmbil,days,start,end}
+  let farhanUpah=0,jhilunUpah=0,days=0;
+  cached.parsedUpah.forEach(({d,r})=>{if(d>=start&&d<=end){farhanUpah+=num(r[5]);jhilunUpah+=num(r[11]);days++}});
+  let farhanAmbil=0,jhilunAmbil=0;
+  cached.fixRows.forEach(r=>{const d=parseDateFlexible(r[0]);if(!d||d<start||d>end)return;const rowText=r.join(' ').toLowerCase();if(!containsAmbilUang(rowText))return;const isFarhan=rowText.includes('farhan');const isjhilun=rowText.includes('jhilun');if(!isFarhan&&!isjhilun)return;let nominal=num(r[12]||0);if(nominal===0)nominal=num(r[11]||0);if(nominal===0){let max=0;r.forEach(c=>{const n=num(c);if(n>1000&&n>max)max=n});nominal=max}if(nominal===0)return;if(isFarhan)farhanAmbil+=nominal;if(isjhilun)jhilunAmbil+=nominal});
+  return {farhanUpah,jhilunUpah,farhanAmbil,jhilunAmbil,farhanSisa:farhanUpah-farhanAmbil,jhilunSisa:jhilunUpah-jhilunAmbil,days,start,end}
 }
 function renderMonth(y,m){
   currentYear=y;currentMonth=m;
